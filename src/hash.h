@@ -1,10 +1,5 @@
 #include <math.h>
 #include <iostream>
-#ifdef __clang__
-#include <__clang_cuda_builtin_vars.h>
-int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
-                      cudaStream_t stream = 0);
-#endif
 
 static constexpr int N = 1<<20; // 1M elements
 static constexpr int KEY_SIZE = 32;
