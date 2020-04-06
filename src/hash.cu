@@ -16,20 +16,20 @@ void add(int n, float *x, float *y)
 */
 
 __device__
-void init_hash_entry(hash_entry *entry)
+void init_hash_entry(hash_entry_t *entry)
 {
-    memset(entry, 0, sizeof(hash_entry));
+    memset(entry, 0, sizeof(hash_entry_t));
     entry->occupied = false; // redundant but just to be certain
 }
 
 __global__
-void init_hash_table(int n, char *hash_table)
+void init_hash_table(int n, hash_table_t *hash_table)
 {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
     for (int i = index; i < n; i += stride) {
-        hash_entry *entry = (hash_entry*) &hash_table[i];
-        init_hash_entry(entry);
+        hash_entry_t entry = hash_table->entries[i];
+        init_hash_entry(&entry);
     }
 }
 
@@ -61,20 +61,20 @@ bool device_memcmp(char* word1, char* word2, uint len)
 }
 
 __global__
-void insert_entry(char *hash_table, char *key, char *word)
+void insert_entry(hash_table_t *hash_table, char *key, char *word)
 {
     uint32_t hash_val = hash_function(key);
     printf("insert hash_val: %u\n", hash_val);
-    hash_entry *entry;
+    hash_entry_t *entry;
 
-    entry = (hash_entry*) &hash_table[hash_val];
+    entry = &hash_table->entries[hash_val];
     while (entry->occupied) {
         // If the keys match, just overwrite the data
         if (device_memcmp(key, entry->key, KEY_SIZE)) {
             break;
         }
         hash_val =  (hash_val + 1) % N;
-        entry = (hash_entry*) &hash_table[hash_val];
+        entry = &hash_table->entries[hash_val];
         printf("insert hash_val: %u\n", hash_val);
     }
     memcpy(entry->key, key, KEY_SIZE);
@@ -83,13 +83,13 @@ void insert_entry(char *hash_table, char *key, char *word)
 }
 
 __global__
-void get_entry(char *hash_table, char *key, char *host_word)
+void get_entry(hash_table_t *hash_table, char *key, char *host_word)
 {
     uint32_t hash_val = hash_function(key);
     printf("get hash_val: %u\n", hash_val);
-    hash_entry *entry;
+    hash_entry_t *entry;
 
-    entry = (hash_entry*) &hash_table[hash_val];
+    entry = &hash_table->entries[hash_val];
     // Loop until we reach an empty entry OR find the key
     while (entry->occupied) {
         printf("Comparing keys %s & %s\n", entry->key, key);
@@ -99,7 +99,7 @@ void get_entry(char *hash_table, char *key, char *host_word)
             return;
         }
         hash_val =  (hash_val + 1) % N;
-        entry = (hash_entry*) &hash_table[hash_val];
+        entry = &hash_table->entries[hash_val];
         printf("get hash_val: %u\n", hash_val);
     }
     host_word = nullptr;
@@ -108,14 +108,12 @@ void get_entry(char *hash_table, char *key, char *host_word)
 
 int main(void)
 {
-    char *hash_table;
+    // char *hash_table;
+    hash_table_t *hash_table;
 
-    cudaMallocManaged(&hash_table, N*sizeof(hash_entry));
+    cudaMallocManaged(&hash_table, N*sizeof(hash_table));
 
-    int blockSize = 256;
-    int numBlocks = (N + blockSize - 1) / blockSize;
-
-    init_hash_table<<<numBlocks, blockSize>>>(N, hash_table);
+    init_hash_table<<<NUM_BLOCKS, BLOCK_SIZE>>>(N, hash_table);
     cudaDeviceSynchronize();
 
     // TODO run a routine here to test the hash table
@@ -148,9 +146,6 @@ int main(void)
         std::cout << "Word: " << word << std::endl;
         std::cout << "Buffer: " << buffer << std::endl;
     }
-
-    /*std::byte b;*/
-    /*(void)(b);*/
 
     // Free memory
     cudaFree(hash_table);
