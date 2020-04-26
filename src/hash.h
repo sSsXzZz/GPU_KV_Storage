@@ -1,3 +1,6 @@
+#ifndef _HASH_H_
+#define _HASH_H_
+
 #ifdef __clang__
 // Added for YouCompleteMe
 #include <__clang_cuda_builtin_vars.h>
@@ -16,7 +19,7 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 static constexpr uint64_t NUM_ELEMENTS = 1 << 20;  // 1M elements
 static constexpr uint KEY_SIZE = 32;
 static constexpr uint WORD_SIZE = 64;
-static constexpr uint BATCH_SIZE = 2;
+static constexpr uint BATCH_SIZE = 10;
 
 // Constants used for kernel invocation
 static constexpr uint BLOCK_SIZE = 256;
@@ -25,16 +28,6 @@ static constexpr uint NUM_BLOCKS = (NUM_ELEMENTS + BLOCK_SIZE - 1) / BLOCK_SIZE;
 // Constants for hash function
 static constexpr uint32_t PRIME = 0x01000193;  //   16777619
 static const uint32_t SEED = 0x811C9DC5;       // 2166136261
-
-struct hash_entry_t {
-    bool occupied;
-    char key[KEY_SIZE];
-    char word[WORD_SIZE];
-};
-
-struct hash_table_t {
-    hash_entry_t entries[NUM_ELEMENTS];
-};
 
 class CudaManagedMemory {
   public:
@@ -140,34 +133,65 @@ class HashTable : public CudaMemory {
   private:
 };
 
-void checkEntryEqual(HashEntry& in, HashEntry& out) {
-    if (in == out) {
-        std::cout << "Entries " << in << " and " << out << " are equal" << std::endl;
-    } else {
-        std::cout << "Entries " << in << " and " << out << " are NOT equal!" << std::endl;
+// ----------------------------------------------
+// Hash Table Interface
+// ----------------------------------------------
+// These functions internally make kernel calls and synchronize afterwards.
+//
+
+void init_hash_table(HashTable* hash_table);
+
+void hash_insert(HashTable* hash_table, HashEntry* entry);
+
+void hash_find(HashTable* hash_table, HashEntry* entry);
+
+void hash_insert_batch(HashTable* hash_table, HashEntryBatch* entry_batch, uint num_entries);
+
+void hash_find_batch(HashTable* hash_table, HashEntryBatch* entry_batch, uint num_entries);
+
+// ----------------------------------------------
+// Debugging Stuff
+// ----------------------------------------------
+void print_all_entries(HashTable* hash_table);
+
+#include <execinfo.h>
+inline void print_trace(void) {
+    void* trace[16];
+    char** messages = (char**)NULL;
+    int i, trace_size = 0;
+
+    trace_size = backtrace(trace, 16);
+    messages = backtrace_symbols(trace, trace_size);
+    char addr[32];
+    char filename[32];
+    for (i = 1; i < trace_size; ++i) {
+        printf("[bt] #%d %s\n", i, messages[i]);
+
+        /* find first occurence of '(' or ' ' in message[i] and assume
+         * everything before that is the file name. (Don't go beyond 0 though
+         * (string terminator)*/
+        size_t p = 0;
+        while (messages[i][p] != '(' && messages[i][p] != ' ' && messages[i][p] != 0) ++p;
+        std::memcpy(filename, messages[i], p);
+        filename[p] = '\0';
+
+        p++;
+        size_t addr_start = p;
+        while (messages[i][p] != ')' && messages[i][p] != ' ' && messages[i][p] != 0) ++p;
+        std::memcpy(addr, messages[i] + addr_start, p - addr_start);
+        addr[p - addr_start] = '\0';
+
+        char syscom[256];
+        sprintf(syscom, "addr2line -e %s %s", filename, addr);
+        // last parameter is the file name of the symbol
+        system(syscom);
     }
 }
 
-// ----------------------------------------------
-// Debugging Stuff Below
-// ----------------------------------------------
-#include <execinfo.h>
-void print_trace(void) {
-    char **strings;
-    size_t i, size;
-    enum Constexpr { MAX_SIZE = 1024 };
-    void *array[MAX_SIZE];
-    size = backtrace(array, MAX_SIZE);
-    strings = backtrace_symbols(array, size);
-    for (i = 0; i < size; i++)
-        printf("%s\n", strings[i]);
-    puts("");
-    free(strings);
-}
+#define cudaCheckErrors() \
+    { cudaCheckErrorsFn(__FILE__, __LINE__); }
 
-#define cudaCheckErrors() { cudaCheckErrorsFn(__FILE__, __LINE__); }
-
-inline void cudaCheckErrorsFn(const char *file, int line) {
+inline void cudaCheckErrorsFn(const char* file, int line) {
     cudaError_t error = cudaGetLastError();
     if (error != cudaSuccess) {
         // print the CUDA error message and exit
@@ -176,3 +200,5 @@ inline void cudaCheckErrorsFn(const char *file, int line) {
         exit(-1);
     }
 }
+
+#endif  // _HASH_H_
