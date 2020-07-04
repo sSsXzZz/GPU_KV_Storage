@@ -7,13 +7,14 @@
 using UniformDistribution = std::uniform_int_distribution<uint>;
 using Generator = std::mt19937;
 using DataMap = std::unordered_map<std::string, std::string>;
+using CLOCK = std::chrono::high_resolution_clock;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 static constexpr uint NUM_TEST_ENTRIES = 10000;
 
 void checkEntryEqual(HashEntry& in, HashEntry& out) {
     if (in == out) {
-        std::cout << "Entries " << in << " and " << out << " are equal" << std::endl;
+        // std::cout << "Entries " << in << " and " << out << " are equal" << std::endl;
     } else {
         std::cout << "Entries " << in << " and " << out << " are NOT equal!" << std::endl;
         std::abort();
@@ -37,7 +38,7 @@ void checkBatchedOutput(DataMap& test_data, HashEntryBatch* out_batch, uint num_
         std::string key(out_batch->at(i).key);
         std::string word(out_batch->at(i).word);
         if (strcmp(key.c_str(), out_key) == 0 && strcmp(word.c_str(), out_word) == 0) {
-            printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
+            // printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
         } else {
             printf("entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
             std::abort();
@@ -58,7 +59,7 @@ int main(void) {
         std::string key = get_random_string(char_picker, generator, key_size(generator), KEY_SIZE);
         std::string word = get_random_string(char_picker, generator, word_size(generator), WORD_SIZE);
 
-        std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
+        // std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
 
         test_entries[key] = word;
     }
@@ -73,6 +74,7 @@ int main(void) {
     cudaCheckErrors();
 
     // Iterate through map and batch insert entries
+    auto t0_insert = CLOCK::now();
     int batch_index = 0;  // Count of entries in this batch
     for (auto entry : test_entries) {
         const std::string& key = entry.first;
@@ -93,8 +95,13 @@ int main(void) {
         hash_insert_batch(h, in_batch, batch_index);
         cudaCheckErrors();
     }
+    auto t1_insert = CLOCK::now();
+    auto tdiff_insert = std::chrono::duration_cast<std::chrono::microseconds>(t1_insert - t0_insert);
+    std::cout << "Insert time: " << tdiff_insert.count() / 1000 << "." << tdiff_insert.count() % 1000 << " ms"
+              << std::endl;
 
     // Iterate through map & batch find entries
+    auto t0_find = CLOCK::now();
     batch_index = 0;
     for (auto entry : test_entries) {
         const std::string& key = entry.first;
@@ -118,14 +125,17 @@ int main(void) {
 
         checkBatchedOutput(test_entries, out_batch, BATCH_SIZE);
     }
+    auto t1_find = CLOCK::now();
+    auto tdiff_find = std::chrono::duration_cast<std::chrono::microseconds>(t1_find - t0_find);
+    std::cout << "Find time: " << tdiff_find.count() / 1000 << "." << tdiff_find.count() % 1000 << " ms" << std::endl;
 
-    print_all_entries(h);
+    // print_all_entries(h);
 
-    std::cout << "_____ UNORDED_MAP ENTRIES _____\n";
+    // std::cout << "_____ UNORDED_MAP ENTRIES _____\n";
     for (auto entry : test_entries) {
-        printf("[%s]=%s\n", entry.first.c_str(), entry.second.c_str());
+        // printf("[%s]=%s\n", entry.first.c_str(), entry.second.c_str());
     }
-    std::cout << "__________________________\n";
+    // std::cout << "__________________________\n";
 
     delete h;
     delete in_batch;

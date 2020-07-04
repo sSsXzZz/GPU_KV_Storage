@@ -26,8 +26,8 @@ __device__ void HashTable::insert_entry(HashEntry* user_entry) {
     char* word = user_entry->word;
 
     uint32_t hash_val = hash_function(key);
-    printf("insert hash_val: %u\n", hash_val);
-    printf("Request to insert element with key %s, word %s\n", user_entry->key, user_entry->word);
+    //printf("insert hash_val: %u\n", hash_val);
+    //printf("Request to insert element with key %s, word %s\n", user_entry->key, user_entry->word);
 
     HashEntryInternal* entry = &entries[hash_val];
     // TODO handle case when hash table is full
@@ -38,33 +38,33 @@ __device__ void HashTable::insert_entry(HashEntry* user_entry) {
         }
         hash_val = (hash_val + 1) % NUM_ELEMENTS;
         entry = &entries[hash_val];
-        printf("insert hash_val: %u\n", hash_val);
+        //printf("insert hash_val: %u\n", hash_val);
     }
 
     std::memcpy(entry->key, key, KEY_SIZE);
     std::memcpy(entry->word, word, WORD_SIZE);
     entry->occupied = true;
-    printf("Inserted element at hash_val %u, key %s, word %s\n", hash_val, entry->key, entry->word);
+    //printf("Inserted element at hash_val %u, key %s, word %s\n", hash_val, entry->key, entry->word);
 }
 
 __device__ void HashTable::find_entry(HashEntry* user_entry) {
     char* key = user_entry->key;
 
     uint32_t hash_val = hash_function(key);
-    printf("get hash_val: %u\n", hash_val);
+    //printf("get hash_val: %u\n", hash_val);
 
     HashEntryInternal* entry = &entries[hash_val];
     // Loop until we reach an empty entry OR find the key
     while (entry->occupied) {
-        // printf("Comparing keys %s & %s\n", entry->key, key);
+        // //printf("Comparing keys %s & %s\n", entry->key, key);
         if (device_memcmp(key, entry->key, KEY_SIZE)) {
-            printf("Found word: %s\n", entry->word);
+            //printf("Found word: %s\n", entry->word);
             std::memcpy(user_entry->word, entry->word, WORD_SIZE);
             return;
         }
         hash_val = (hash_val + 1) % NUM_ELEMENTS;
         entry = &entries[hash_val];
-        printf("get hash_val: %u\n", hash_val);
+        //printf("get hash_val: %u\n", hash_val);
     }
 
     // key not found, make sure the word we send back is empty
@@ -101,7 +101,7 @@ __global__ void hash_insert_batch_internal(HashTable* hash_table, HashEntryBatch
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
     for (uint32_t i = index; i < num_entries; i += stride) {
-        printf("Batch insert index %u\n", i);
+        //printf("Batch insert index %u\n", i);
         hash_table->insert_entry(&entry_batch->entries[i]);
     }
 }
