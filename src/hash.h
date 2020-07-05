@@ -20,6 +20,7 @@ static constexpr uint64_t NUM_ELEMENTS = 1 << 20;  // 1M elements
 static constexpr uint KEY_SIZE = 32;
 static constexpr uint WORD_SIZE = 64;
 static constexpr uint BATCH_SIZE = 10000;
+static constexpr uint CPU_BATCH_SIZE = 10;
 
 // Constants used for kernel invocation
 static constexpr uint BLOCK_SIZE = 256;
@@ -29,6 +30,17 @@ static constexpr uint NUM_BLOCKS = (NUM_ELEMENTS + BLOCK_SIZE - 1) / BLOCK_SIZE;
 static constexpr uint32_t PRIME = 0x01000193;  //   16777619
 static const uint32_t SEED = 0x811C9DC5;       // 2166136261
 
+// Stores Hash table entry fields needed internally
+class HashEntryInternal {
+  public:
+    bool occupied;
+    char key[KEY_SIZE];
+    char word[WORD_SIZE];
+};
+
+// ----------------------------------------------
+// Cuda Memory
+// ----------------------------------------------
 class CudaManagedMemory {
   public:
     void* operator new(size_t len) {
@@ -55,23 +67,28 @@ class CudaMemory {
     }
 };
 
-class HashEntry : public CudaManagedMemory {
+// ----------------------------------------------
+// GPU Hash Table
+// ----------------------------------------------
+//
+
+class GpuHashEntry : public CudaManagedMemory {
   public:
-    HashEntry() {
+    GpuHashEntry() {
         std::memset(key, 0, sizeof(key));
         std::memset(word, 0, sizeof(word));
     }
 
-    HashEntry(char* k) : HashEntry() {
+    GpuHashEntry(char* k) : GpuHashEntry() {
         std::strcpy(key, k);
     }
 
-    HashEntry(char* k, char* w) : HashEntry(k) {
+    GpuHashEntry(char* k, char* w) : GpuHashEntry(k) {
         std::strcpy(word, w);
     }
 
-    HashEntry(HashEntry& h) = delete;
-    HashEntry(HashEntry&& h) = delete;
+    GpuHashEntry(GpuHashEntry& h) = delete;
+    GpuHashEntry(GpuHashEntry&& h) = delete;
 
     void set(char* k) {
         std::strcpy(key, k);
@@ -85,45 +102,36 @@ class HashEntry : public CudaManagedMemory {
     char key[KEY_SIZE];
     char word[WORD_SIZE];
 };
-inline bool operator==(const HashEntry& a, const HashEntry& b) {
+inline bool operator==(const GpuHashEntry& a, const GpuHashEntry& b) {
     return (std::memcmp(a.key, b.key, KEY_SIZE) == 0) && (std::memcmp(a.word, b.word, WORD_SIZE) == 0);
 }
-inline std::ostream& operator<<(std::ostream& outs, const HashEntry& entry) {
+inline std::ostream& operator<<(std::ostream& outs, const GpuHashEntry& entry) {
     return outs << "(" << entry.key << ", " << entry.word << ")";
 }
 
-class HashEntryBatch : public CudaManagedMemory {
+class GpuHashEntryBatch : public CudaManagedMemory {
   public:
-    HashEntryBatch() {
+    GpuHashEntryBatch() {
         memset(entries, 0, sizeof(entries));
     }
-    HashEntryBatch(HashEntryBatch& h) = delete;
-    HashEntryBatch(HashEntryBatch&& h) = delete;
+    GpuHashEntryBatch(GpuHashEntryBatch& h) = delete;
+    GpuHashEntryBatch(GpuHashEntryBatch&& h) = delete;
 
-    HashEntry entries[BATCH_SIZE];
+    GpuHashEntry entries[BATCH_SIZE];
 
     // Returns the entry at the given index
-    inline HashEntry& at(std::size_t i) {
+    inline GpuHashEntry& at(std::size_t i) {
         return entries[i];
     }
 };
 
-// TODO should this just inherit from HashEntry?
-// Stores extra fields needed internally
-class HashEntryInternal {
-  public:
-    bool occupied;
-    char key[KEY_SIZE];
-    char word[WORD_SIZE];
-};
-
-class HashTable : public CudaMemory {
+class GpuHashTable : public CudaMemory {
   public:
     // Inserts the entry into the hash table
-    __device__ void insert_entry(HashEntry* user_entry);
+    __device__ void insert_entry(GpuHashEntry* user_entry);
 
     // Finds the entry in the hash table. The word in the user_entry is set to the word found.
-    __device__ void find_entry(HashEntry* user_entry);
+    __device__ void find_entry(GpuHashEntry* user_entry);
 
     // Returns the pointer to the entry at the given index
     __device__ HashEntryInternal* get_entry(uint32_t index);
@@ -134,25 +142,55 @@ class HashTable : public CudaMemory {
 };
 
 // ----------------------------------------------
-// Hash Table Interface
+// CPU Hash Table
+// ----------------------------------------------
+
+class CpuHashEntry {
+  public:
+    char key[KEY_SIZE];
+    char word[WORD_SIZE];
+};
+
+class CpuHashEntryBatch {
+  public:
+    CpuHashEntry entries[CPU_BATCH_SIZE];
+};
+
+class CpuHashTable {
+  public:
+    // Insert entry into hash table
+    void insert_entry(CpuHashEntry* user_entry);
+
+    // Finds the entry in the hash table
+    void find_entry(CpuHashEntry* user_entry);
+
+    void insert_batch(CpuHashEntryBatch* entry_batch, uint num_entries);
+
+    void find_batch(CpuHashEntryBatch* entry_batch, uint num_entries);
+
+    HashEntryInternal entries[NUM_ELEMENTS];
+};
+
+// ----------------------------------------------
+// GPU Hash Table Interface
 // ----------------------------------------------
 // These functions internally make kernel calls and synchronize afterwards.
 //
 
-void init_hash_table(HashTable* hash_table);
+void init_hash_table(GpuHashTable* hash_table);
 
-void hash_insert(HashTable* hash_table, HashEntry* entry);
+void hash_insert(GpuHashTable* hash_table, GpuHashEntry* entry);
 
-void hash_find(HashTable* hash_table, HashEntry* entry);
+void hash_find(GpuHashTable* hash_table, GpuHashEntry* entry);
 
-void hash_insert_batch(HashTable* hash_table, HashEntryBatch* entry_batch, uint num_entries);
+void hash_insert_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries);
 
-void hash_find_batch(HashTable* hash_table, HashEntryBatch* entry_batch, uint num_entries);
+void hash_find_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries);
 
 // ----------------------------------------------
 // Debugging Stuff
 // ----------------------------------------------
-void print_all_entries(HashTable* hash_table);
+void print_all_entries(GpuHashTable* hash_table);
 
 #include <execinfo.h>
 inline void print_trace(void) {
