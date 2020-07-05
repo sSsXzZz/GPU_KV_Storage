@@ -1,4 +1,5 @@
 #include <chrono>
+#include <ctime>
 #include <random>
 #include <unordered_map>
 
@@ -10,14 +11,14 @@ using DataMap = std::unordered_map<std::string, std::string>;
 using CLOCK = std::chrono::high_resolution_clock;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-static constexpr uint NUM_TEST_ENTRIES = 1000000;
+static constexpr uint NUM_TEST_ENTRIES = 10000;
 
 void checkEntryEqual(GpuHashEntry& in, GpuHashEntry& out) {
     if (in == out) {
         // std::cout << "Entries " << in << " and " << out << " are equal" << std::endl;
     } else {
         std::cout << "Entries " << in << " and " << out << " are NOT equal!" << std::endl;
-        std::abort();
+        abort_with_trace();
     }
 }
 
@@ -30,96 +31,99 @@ std::string get_random_string(UniformDistribution& char_picker, Generator& gener
     return s;
 }
 
+// TODO use test data here?
 void checkGpuBatchedOutput(DataMap& test_data, GpuHashEntryBatch* out_batch, uint num_entries) {
-    for (uint i = 0; i < num_entries; i++) {
-        const char* out_key = out_batch->at(i).key;
-        const char* out_word = out_batch->at(i).word;
-
-        std::string key(out_batch->at(i).key);
-        std::string word(out_batch->at(i).word);
-        if (strcmp(key.c_str(), out_key) == 0 && strcmp(word.c_str(), out_word) == 0) {
-            // printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
-        } else {
-            printf("entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
-            std::abort();
-        }
-    }
-}
-
-void checkCpuBatchedOutput(DataMap& test_data, CpuHashEntryBatch* out_batch, uint num_entries) {
     for (uint i = 0; i < num_entries; i++) {
         const char* out_key = out_batch->entries[i].key;
         const char* out_word = out_batch->entries[i].word;
 
-        std::string key(out_batch->entries[i].key);
-        std::string word(out_batch->entries[i].word);
+        std::string key(out_key, KEY_SIZE);
+        auto it = test_data.find(key);
+        if (it == test_data.end()) {
+            printf("Key %s not found in the test data map\n", key.c_str());
+            abort_with_trace();
+        }
+        std::string word = test_data[key];
+
         if (strcmp(key.c_str(), out_key) == 0 && strcmp(word.c_str(), out_word) == 0) {
             // printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
         } else {
-            printf("entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
-            std::abort();
+            printf("GPU: entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
+            abort_with_trace();
         }
     }
 }
 
+void checkCpuOutput(DataMap& test_data, CpuHashEntry* out_entry) {
+    const char* out_key = out_entry->key;
+    const char* out_word = out_entry->word;
+
+    std::string key(out_key, KEY_SIZE);
+    std::string word = test_data[key];
+    if (strcmp(key.c_str(), out_key) == 0 && strcmp(word.c_str(), out_word) == 0) {
+        // printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
+    } else {
+        printf("CPU: entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
+        abort_with_trace();
+    }
+}
+
+time_t ts_diff_us(timespec t0, timespec t1) {
+    return (((t1.tv_sec - t0.tv_sec) * 1000000000) + (t1.tv_nsec - t0.tv_nsec)) / 1000;
+}
+
 void test_cpu_table(DataMap& test_entries) {
     CpuHashTable* h = new CpuHashTable;
+    h->init();
 
     CpuHashEntryBatch* in_batch = new CpuHashEntryBatch;
     CpuHashEntryBatch* out_batch = new CpuHashEntryBatch;
 
+    CpuHashEntry* in_entry = new CpuHashEntry;
+    CpuHashEntry* out_entry = new CpuHashEntry;
+
     // Iterate through map and batch insert entries
-    auto t0_insert = CLOCK::now();
-    int batch_index = 0;  // Count of entries in this batch
-    for (auto entry : test_entries) {
+    struct timespec t0_insert;
+    clock_gettime(CLOCK_MONOTONIC, &t0_insert);
+    for (auto& entry : test_entries) {
         const std::string& key = entry.first;
         const std::string& word = entry.second;
-        std::memcpy(&in_batch->entries[batch_index].key, key.c_str(), key.size());
-        std::memcpy(&in_batch->entries[batch_index].word, word.c_str(), word.size());
-        batch_index++;
 
-        // Insert entries using max CPU_BATCH_SIZE
-        if (batch_index == CPU_BATCH_SIZE) {
-            h->insert_batch(in_batch, CPU_BATCH_SIZE);
-            batch_index = 0;
+        std::memcpy(&in_entry->key, key.c_str(), key.size());
+        std::memcpy(&in_entry->word, word.c_str(), word.size());
+
+        if (in_entry->key[0] == '\0') {
+            std::cout << "FOUND THE EMPTY KEY\n";
         }
+        h->insert_entry(in_entry);
     }
-    // Insert remaining entries
-    if (batch_index > 0 && batch_index < CPU_BATCH_SIZE) {
-        h->insert_batch(in_batch, CPU_BATCH_SIZE);
-    }
-    auto t1_insert = CLOCK::now();
-    auto tdiff_insert = std::chrono::duration_cast<std::chrono::microseconds>(t1_insert - t0_insert);
-    std::cout << "CPU Insert time: " << tdiff_insert.count() / 1000 << "." << tdiff_insert.count() % 1000 << " ms"
-              << std::endl;
+    struct timespec t1_insert;
+    clock_gettime(CLOCK_MONOTONIC, &t1_insert);
+    time_t tdiff_insert = ts_diff_us(t0_insert, t1_insert);
+    std::cout << "CPU Insert time: " << tdiff_insert << " us" << std::endl;
+
+    // h->debug_print_entries();
 
     // Iterate through map & batch find entries
-    auto t0_find = CLOCK::now();
-    batch_index = 0;
-    for (auto entry : test_entries) {
+    struct timespec t0_find;
+    clock_gettime(CLOCK_MONOTONIC, &t0_find);
+    for (auto& entry : test_entries) {
         const std::string& key = entry.first;
-        std::memcpy(&out_batch->entries[batch_index].key, key.c_str(), key.size());
-        std::memset(&out_batch->entries[batch_index].word, 0, WORD_SIZE);
-        batch_index++;
 
-        // Insert entries using max CPU_BATCH_SIZE
-        if (batch_index == CPU_BATCH_SIZE) {
-            h->find_batch(out_batch, CPU_BATCH_SIZE);
+        std::memcpy(&out_entry->key, key.c_str(), key.size());
+        std::memset(&out_entry->word, 0, WORD_SIZE);
 
-            checkCpuBatchedOutput(test_entries, out_batch, CPU_BATCH_SIZE);
-            batch_index = 0;
+        h->find_entry(out_entry);
+
+        if (out_entry->key[0] == '\0') {
+            std::cout << "FOUND THE EMPTY KEY\n";
         }
+        checkCpuOutput(test_entries, out_entry);
     }
-    // Check remaining entries
-    if (batch_index > 0 && batch_index < CPU_BATCH_SIZE) {
-        h->find_batch(out_batch, CPU_BATCH_SIZE);
-
-        checkCpuBatchedOutput(test_entries, out_batch, CPU_BATCH_SIZE);
-    }
-    auto t1_find = CLOCK::now();
-    auto tdiff_find = std::chrono::duration_cast<std::chrono::microseconds>(t1_find - t0_find);
-    std::cout << "CPU Find time: " << tdiff_find.count() / 1000 << "." << tdiff_find.count() % 1000 << " ms"
-              << std::endl;
+    struct timespec t1_find;
+    clock_gettime(CLOCK_MONOTONIC, &t1_find);
+    time_t tdiff_find = ts_diff_us(t0_find, t1_find);
+    std::cout << "CPU Find time: " << tdiff_find << " us" << std::endl;
 
     // print_all_entries(h);
 
@@ -145,9 +149,10 @@ void test_gpu_table(DataMap& test_entries) {
     cudaCheckErrors();
 
     // Iterate through map and batch insert entries
-    auto t0_insert = CLOCK::now();
+    struct timespec t0_insert;
+    clock_gettime(CLOCK_MONOTONIC, &t0_insert);
     int batch_index = 0;  // Count of entries in this batch
-    for (auto entry : test_entries) {
+    for (auto& entry : test_entries) {
         const std::string& key = entry.first;
         const std::string& word = entry.second;
         std::memcpy(&in_batch->entries[batch_index].key, key.c_str(), key.size());
@@ -166,15 +171,16 @@ void test_gpu_table(DataMap& test_entries) {
         hash_insert_batch(h, in_batch, batch_index);
         cudaCheckErrors();
     }
-    auto t1_insert = CLOCK::now();
-    auto tdiff_insert = std::chrono::duration_cast<std::chrono::microseconds>(t1_insert - t0_insert);
-    std::cout << "GPU Insert time: " << tdiff_insert.count() / 1000 << "." << tdiff_insert.count() % 1000 << " ms"
-              << std::endl;
+    struct timespec t1_insert;
+    clock_gettime(CLOCK_MONOTONIC, &t1_insert);
+    time_t tdiff_insert = ts_diff_us(t0_insert, t1_insert);
+    std::cout << "GPU Insert time: " << tdiff_insert << " us" << std::endl;
 
     // Iterate through map & batch find entries
-    auto t0_find = CLOCK::now();
+    struct timespec t0_find;
+    clock_gettime(CLOCK_MONOTONIC, &t0_find);
     batch_index = 0;
-    for (auto entry : test_entries) {
+    for (auto& entry : test_entries) {
         const std::string& key = entry.first;
         std::memcpy(&out_batch->entries[batch_index].key, key.c_str(), key.size());
         std::memset(&out_batch->entries[batch_index].word, 0, WORD_SIZE);
@@ -194,17 +200,17 @@ void test_gpu_table(DataMap& test_entries) {
         hash_find_batch(h, out_batch, BATCH_SIZE);
         cudaCheckErrors();
 
-        checkGpuBatchedOutput(test_entries, out_batch, BATCH_SIZE);
+        checkGpuBatchedOutput(test_entries, out_batch, batch_index);
     }
-    auto t1_find = CLOCK::now();
-    auto tdiff_find = std::chrono::duration_cast<std::chrono::microseconds>(t1_find - t0_find);
-    std::cout << "GPU Find time: " << tdiff_find.count() / 1000 << "." << tdiff_find.count() % 1000 << " ms"
-              << std::endl;
+    struct timespec t1_find;
+    clock_gettime(CLOCK_MONOTONIC, &t1_find);
+    time_t tdiff_find = ts_diff_us(t0_find, t1_find);
+    std::cout << "GPU Find time: " << tdiff_find << " us" << std::endl;
 
     // print_all_entries(h);
 
     // std::cout << "_____ UNORDED_MAP ENTRIES _____\n";
-    for (auto entry : test_entries) {
+    for (auto& entry : test_entries) {
         // printf("[%s]=%s\n", entry.first.c_str(), entry.second.c_str());
     }
     // std::cout << "__________________________\n";
@@ -234,87 +240,6 @@ int main(void) {
 
     test_gpu_table(test_entries);
     test_cpu_table(test_entries);
-
-    /*
-    GpuHashTable* h = new GpuHashTable;
-    init_hash_table(h);
-    cudaCheckErrors();
-
-    GpuHashEntryBatch* in_batch = new GpuHashEntryBatch;
-    GpuHashEntryBatch* out_batch = new GpuHashEntryBatch;
-    cudaDeviceSynchronize();
-    cudaCheckErrors();
-
-    // Iterate through map and batch insert entries
-    auto t0_insert = CLOCK::now();
-    int batch_index = 0;  // Count of entries in this batch
-    for (auto entry : test_entries) {
-        const std::string& key = entry.first;
-        const std::string& word = entry.second;
-        std::memcpy(&in_batch->entries[batch_index].key, key.c_str(), key.size());
-        std::memcpy(&in_batch->entries[batch_index].word, word.c_str(), word.size());
-        batch_index++;
-
-        // Insert entries using max BATCH_SIZE
-        if (batch_index == BATCH_SIZE) {
-            hash_insert_batch(h, in_batch, BATCH_SIZE);
-            cudaCheckErrors();
-            batch_index = 0;
-        }
-    }
-    // Insert remaining entries
-    if (batch_index > 0 && batch_index < BATCH_SIZE) {
-        hash_insert_batch(h, in_batch, batch_index);
-        cudaCheckErrors();
-    }
-    auto t1_insert = CLOCK::now();
-    auto tdiff_insert = std::chrono::duration_cast<std::chrono::microseconds>(t1_insert - t0_insert);
-    std::cout << "Insert time: " << tdiff_insert.count() / 1000 << "." << tdiff_insert.count() % 1000 << " ms"
-              << std::endl;
-
-    // Iterate through map & batch find entries
-    auto t0_find = CLOCK::now();
-    batch_index = 0;
-    for (auto entry : test_entries) {
-        const std::string& key = entry.first;
-        std::memcpy(&out_batch->entries[batch_index].key, key.c_str(), key.size());
-        std::memset(&out_batch->entries[batch_index].word, 0, WORD_SIZE);
-        batch_index++;
-
-        // Insert entries using max BATCH_SIZE
-        if (batch_index == BATCH_SIZE) {
-            hash_find_batch(h, out_batch, BATCH_SIZE);
-            cudaCheckErrors();
-
-            checkBatchedOutput(test_entries, out_batch, BATCH_SIZE);
-            batch_index = 0;
-        }
-    }
-    // Check remaining entries
-    if (batch_index > 0 && batch_index < BATCH_SIZE) {
-        hash_find_batch(h, out_batch, BATCH_SIZE);
-        cudaCheckErrors();
-
-        checkBatchedOutput(test_entries, out_batch, BATCH_SIZE);
-    }
-    auto t1_find = CLOCK::now();
-    auto tdiff_find = std::chrono::duration_cast<std::chrono::microseconds>(t1_find - t0_find);
-    std::cout << "Find time: " << tdiff_find.count() / 1000 << "." << tdiff_find.count() % 1000 << " ms" << std::endl;
-
-    // print_all_entries(h);
-
-    // std::cout << "_____ UNORDED_MAP ENTRIES _____\n";
-    for (auto entry : test_entries) {
-        // printf("[%s]=%s\n", entry.first.c_str(), entry.second.c_str());
-    }
-    // std::cout << "__________________________\n";
-
-    delete h;
-    delete in_batch;
-    delete out_batch;
-
-    // TODO
-    */
 
     return 0;
 }

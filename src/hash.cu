@@ -83,7 +83,7 @@ __device__ HashEntryInternal* GpuHashTable::get_entry(uint32_t index) {
     return &entries[index];
 }
 
-__device__ inline void init_hash_entry(HashEntryInternal* entry) {
+__device__ __host__ inline void init_hash_entry(HashEntryInternal* entry) {
     std::memset(entry, 0, sizeof(HashEntryInternal));
 }
 
@@ -150,6 +150,13 @@ void hash_find_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, u
 // CPU Hash Table
 // ----------------------------------------------
 
+void CpuHashTable::init() {
+    for (int i = 0; i < NUM_ELEMENTS; i++) {
+        HashEntryInternal* entry = &entries[i];
+        init_hash_entry(entry);
+    }
+}
+
 void CpuHashTable::insert_entry(CpuHashEntry* user_entry) {
     char* key = user_entry->key;
     char* word = user_entry->word;
@@ -176,19 +183,6 @@ void CpuHashTable::insert_entry(CpuHashEntry* user_entry) {
     // printf("Inserted element at hash_val %u, key %s, word %s\n", hash_val, entry->key, entry->word);
 }
 
-// TODO temporary insert & find functions
-void CpuHashTable::insert_batch(CpuHashEntryBatch* entry_batch, uint num_entries) {
-    for (int i = 0; i < num_entries; i++) {
-        insert_entry(&entry_batch->entries[i]);
-    }
-}
-
-void CpuHashTable::find_batch(CpuHashEntryBatch* entry_batch, uint num_entries) {
-    for (int i = 0; i < num_entries; i++) {
-        find_entry(&entry_batch->entries[i]);
-    }
-}
-
 void CpuHashTable::find_entry(CpuHashEntry* user_entry) {
     char* key = user_entry->key;
 
@@ -212,6 +206,30 @@ void CpuHashTable::find_entry(CpuHashEntry* user_entry) {
     // key not found, make sure the word we send back is empty
     user_entry->word[0] = 0;
     return;
+}
+
+// TODO temporary insert & find functions
+void CpuHashTable::insert_batch(CpuHashEntryBatch* entry_batch, uint num_entries) {
+    for (int i = 0; i < num_entries; i++) {
+        insert_entry(&entry_batch->entries[i]);
+    }
+}
+
+void CpuHashTable::find_batch(CpuHashEntryBatch* entry_batch, uint num_entries) {
+    for (int i = 0; i < num_entries; i++) {
+        find_entry(&entry_batch->entries[i]);
+    }
+}
+
+void CpuHashTable::debug_print_entries(){
+    printf("_____ ALL CPU ENTRIES _____\n");
+    for (uint32_t i = 0; i < NUM_ELEMENTS; i++) {
+        HashEntryInternal* entry = &entries[i];
+        if (entry->occupied) {
+            printf("%u: (%s, %s)\n", i, entry->key, entry->word);
+        }
+    }
+    printf("___________________________\n");
 }
 
 // ----------------------------------------------

@@ -23,7 +23,7 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 static constexpr uint64_t NUM_ELEMENTS = 1 << 20;  // 1M elements
 static constexpr uint KEY_SIZE = 32;
 static constexpr uint WORD_SIZE = 64;
-static constexpr uint BATCH_SIZE = 100000;
+static constexpr uint BATCH_SIZE = 1;
 static constexpr uint CPU_BATCH_SIZE = 10;
 
 static constexpr uint BLOCK_SIZE = 256;
@@ -170,6 +170,8 @@ class CpuHashEntryBatch {
 
 class CpuHashTable {
   public:
+    void init();
+
     // Insert entry into hash table
     void insert_entry(CpuHashEntry* user_entry);
 
@@ -179,6 +181,8 @@ class CpuHashTable {
     void insert_batch(CpuHashEntryBatch* entry_batch, uint num_entries);
 
     void find_batch(CpuHashEntryBatch* entry_batch, uint num_entries);
+
+    void debug_print_entries();
 
     HashEntryInternal entries[NUM_ELEMENTS];
 };
@@ -249,6 +253,11 @@ inline void cudaCheckErrorsFn(const char* file, int line) {
         print_trace();
         exit(-1);
     }
+}
+
+inline void abort_with_trace() {
+    print_trace();
+    exit(-1);
 }
 
 #endif  // _HASH_H_
