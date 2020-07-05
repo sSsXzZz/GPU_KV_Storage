@@ -208,19 +208,6 @@ void CpuHashTable::find_entry(CpuHashEntry* user_entry) {
     return;
 }
 
-// TODO temporary insert & find functions
-void CpuHashTable::insert_batch(CpuHashEntryBatch* entry_batch, uint num_entries) {
-    for (int i = 0; i < num_entries; i++) {
-        insert_entry(&entry_batch->entries[i]);
-    }
-}
-
-void CpuHashTable::find_batch(CpuHashEntryBatch* entry_batch, uint num_entries) {
-    for (int i = 0; i < num_entries; i++) {
-        find_entry(&entry_batch->entries[i]);
-    }
-}
-
 void CpuHashTable::debug_print_entries(){
     printf("_____ ALL CPU ENTRIES _____\n");
     for (uint32_t i = 0; i < NUM_ELEMENTS; i++) {

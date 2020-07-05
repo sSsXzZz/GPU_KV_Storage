@@ -178,10 +178,6 @@ class CpuHashTable {
     // Finds the entry in the hash table
     void find_entry(CpuHashEntry* user_entry);
 
-    void insert_batch(CpuHashEntryBatch* entry_batch, uint num_entries);
-
-    void find_batch(CpuHashEntryBatch* entry_batch, uint num_entries);
-
     void debug_print_entries();
 
     HashEntryInternal entries[NUM_ELEMENTS];
