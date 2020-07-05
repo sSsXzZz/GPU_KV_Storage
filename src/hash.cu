@@ -122,7 +122,7 @@ __global__ void hash_find_batch_internal(GpuHashTable* hash_table, GpuHashEntryB
 }
 
 void init_hash_table(GpuHashTable* hash_table) {
-    init_hash_table_internal<<<NUM_BLOCKS, BLOCK_SIZE>>>(hash_table);
+    init_hash_table_internal<<<NUM_BLOCKS_ALL, BLOCK_SIZE>>>(hash_table);
     cudaDeviceSynchronize();
 }
 
@@ -137,12 +137,12 @@ void hash_find(GpuHashTable* hash_table, GpuHashEntry* entry) {
 }
 
 void hash_insert_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries) {
-    hash_insert_batch_internal<<<NUM_BLOCKS, BLOCK_SIZE>>>(hash_table, entry_batch, num_entries);
+    hash_insert_batch_internal<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(hash_table, entry_batch, num_entries);
     cudaDeviceSynchronize();
 }
 
 void hash_find_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries) {
-    hash_find_batch_internal<<<NUM_BLOCKS, BLOCK_SIZE>>>(hash_table, entry_batch, num_entries);
+    hash_find_batch_internal<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(hash_table, entry_batch, num_entries);
     cudaDeviceSynchronize();
 }
 
@@ -230,7 +230,7 @@ __global__ void print_all_entries_internal(GpuHashTable* hash_table) {
 
 void print_all_entries(GpuHashTable* hash_table) {
     printf("_____ ALL ENTRIES _____\n");
-    print_all_entries_internal<<<NUM_BLOCKS, BLOCK_SIZE>>>(hash_table);
+    print_all_entries_internal<<<NUM_BLOCKS_ALL, BLOCK_SIZE>>>(hash_table);
     cudaDeviceSynchronize();
     printf("_______________________\n");
 }

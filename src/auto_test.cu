@@ -10,7 +10,7 @@ using DataMap = std::unordered_map<std::string, std::string>;
 using CLOCK = std::chrono::high_resolution_clock;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-static constexpr uint NUM_TEST_ENTRIES = 100000;
+static constexpr uint NUM_TEST_ENTRIES = 1000000;
 
 void checkEntryEqual(GpuHashEntry& in, GpuHashEntry& out) {
     if (in == out) {

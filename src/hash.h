@@ -15,20 +15,32 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 #include <cstring>
 #include <iostream>
 
+// ----------------------------------------------
+// Constants
+// ----------------------------------------------
+
 // Constants for hash table
 static constexpr uint64_t NUM_ELEMENTS = 1 << 20;  // 1M elements
 static constexpr uint KEY_SIZE = 32;
 static constexpr uint WORD_SIZE = 64;
-static constexpr uint BATCH_SIZE = 10000;
+static constexpr uint BATCH_SIZE = 100000;
 static constexpr uint CPU_BATCH_SIZE = 10;
 
-// Constants used for kernel invocation
 static constexpr uint BLOCK_SIZE = 256;
-static constexpr uint NUM_BLOCKS = (NUM_ELEMENTS + BLOCK_SIZE - 1) / BLOCK_SIZE;
+
+// Used for kernel calls that touch ALL elements of the hash table
+static constexpr uint NUM_BLOCKS_ALL = (NUM_ELEMENTS + BLOCK_SIZE - 1) / BLOCK_SIZE;
+
+// Used for kernel calls that touch a batch of elements
+static constexpr uint NUM_BLOCKS_BATCH = (BATCH_SIZE + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
 // Constants for hash function
 static constexpr uint32_t PRIME = 0x01000193;  //   16777619
 static const uint32_t SEED = 0x811C9DC5;       // 2166136261
+
+// ----------------------------------------------
+// Shared structures
+// ----------------------------------------------
 
 // Stores Hash table entry fields needed internally
 class HashEntryInternal {
