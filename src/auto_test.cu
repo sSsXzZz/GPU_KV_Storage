@@ -5,6 +5,13 @@
 
 #include "hash.h"
 
+using hash::CpuHashEntry;
+using hash::CpuHashEntryBatch;
+using hash::CpuHashTable;
+using hash::GpuHashEntry;
+using hash::GpuHashEntryBatch;
+using hash::GpuHashTable;
+
 using UniformDistribution = std::uniform_int_distribution<uint>;
 using Generator = std::mt19937;
 using DataMap = std::unordered_map<std::string, std::string>;

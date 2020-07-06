@@ -28,6 +28,8 @@ __device__ bool device_memcmp(char* word1, char* word2, uint len) {
     }
     return true;
 }
+
+namespace hash {
 __device__ void GpuHashTable::insert_entry(GpuHashEntry* user_entry) {
     char* key = user_entry->key;
     char* word = user_entry->word;
@@ -208,7 +210,7 @@ void CpuHashTable::find_entry(CpuHashEntry* user_entry) {
     return;
 }
 
-void CpuHashTable::debug_print_entries(){
+void CpuHashTable::debug_print_entries() {
     printf("_____ ALL CPU ENTRIES _____\n");
     for (uint32_t i = 0; i < NUM_ELEMENTS; i++) {
         HashEntryInternal* entry = &entries[i];
@@ -239,3 +241,5 @@ void print_all_entries(GpuHashTable* hash_table) {
     cudaDeviceSynchronize();
     printf("_______________________\n");
 }
+
+}  // namespace hash

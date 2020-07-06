@@ -38,13 +38,14 @@ static constexpr uint NUM_BLOCKS_BATCH = (BATCH_SIZE + BLOCK_SIZE - 1) / BLOCK_S
 static constexpr uint32_t PRIME = 0x01000193;  //   16777619
 static const uint32_t SEED = 0x811C9DC5;       // 2166136261
 
+namespace hash {
+
 // ----------------------------------------------
 // Shared structures
 // ----------------------------------------------
 
 // Stores Hash table entry fields needed internally
-class HashEntryInternal {
-  public:
+struct HashEntryInternal {
     bool occupied;
     char key[KEY_SIZE];
     char word[WORD_SIZE];
@@ -203,6 +204,8 @@ void hash_find_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, u
 // Debugging Stuff
 // ----------------------------------------------
 void print_all_entries(GpuHashTable* hash_table);
+
+}  // namespace hash
 
 #include <execinfo.h>
 inline void print_trace(void) {
