@@ -222,6 +222,103 @@ void CpuHashTable::debug_print_entries() {
 }
 
 // ----------------------------------------------
+// Hybrid Hash Table
+// ----------------------------------------------
+
+HybridHashTable::HybridHashTable() {
+    word_storage = new GpuHashTable;
+    cudaDeviceSynchronize();
+    cudaCheckErrors();
+
+    for (uint32_t i = 0; i < NUM_ELEMENTS; i++) {
+        std::memset(&key_storage[i], 0, sizeof(HybridHashEntryInternal));
+    }
+}
+
+uint32_t HybridHashTable::find_location(char key[KEY_SIZE]) {
+    uint32_t hash_val = hash_function(key);
+
+    HybridHashEntryInternal* entry = &key_storage[hash_val];
+    // TODO handle case when hash table is full
+    while (entry->occupied) {
+        // If the keys match, just overwrite the data
+        if (std::memcmp(key, entry->key, KEY_SIZE) == 0) {
+            break;
+        }
+        hash_val = (hash_val + 1) % NUM_ELEMENTS;
+        entry = &key_storage[hash_val];
+    }
+
+    return hash_val;
+}
+
+void HybridHashTable::insert_batch(HybridHashEntryBatch* entry_batch, uint num_entries) {
+    // iterate through entries, find the key location, and populate the internal_batch with the locations
+    for (uint i = 0; i < num_entries; i++) {
+        uint32_t location = find_location(entry_batch->keys[i]);
+        entry_batch->locations[i] = location;
+
+        // Set key storage to occupied and copy key
+        key_storage[location].occupied = true;
+        std::memcpy(key_storage[location].key, entry_batch->keys[i], KEY_SIZE);
+    }
+
+    // TODO change this to work only words
+    hash_insert_batch(word_storage, entry_batch, num_entries);
+}
+
+void HybridHashTable::find_batch(HybridHashEntryBatch* entry_batch, uint num_entries) {
+    // iterate through entries, find the key location, and populate the internal_batch with the location
+    for (uint i = 0; i < num_entries; i++) {
+        entry_batch->locations[i] = find_location(entry_batch->keys[i]);
+    }
+
+    hash_find_batch(word_storage, entry_batch, num_entries);
+}
+
+__global__ void hash_insert_batch_internal(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch,
+                                           uint num_entries) {
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int stride = blockDim.x * gridDim.x;
+    for (uint32_t i = index; i < num_entries; i += stride) {
+        char* word = entry_batch->words[i];
+        uint32_t location = entry_batch->locations[i];
+
+        std::memcpy(&hash_table->entries[location].word, word, WORD_SIZE);
+    }
+}
+
+__global__ void hash_find_batch_internal(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch,
+                                         uint num_entries) {
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int stride = blockDim.x * gridDim.x;
+    for (uint32_t i = index; i < num_entries; i += stride) {
+        uint32_t location = entry_batch->locations[i];
+
+        std::memcpy(&entry_batch->words[i], &hash_table->entries[location].word, WORD_SIZE);
+    }
+}
+
+void hash_insert_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries) {
+    hash_insert_batch_internal<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(hash_table, entry_batch, num_entries);
+    cudaDeviceSynchronize();
+}
+
+void hash_find_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries) {
+    hash_find_batch_internal<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(hash_table, entry_batch, num_entries);
+    cudaDeviceSynchronize();
+}
+
+void HybridHashTable::debug_print_entries() {
+    for (uint32_t i = 0; i < NUM_ELEMENTS; i++) {
+        HybridHashEntryInternal* entry = &key_storage[i];
+        if (entry->occupied) {
+            printf("%u: (key %s)\n", i, entry->key);
+        }
+    }
+}
+
+// ----------------------------------------------
 // Debugging
 // ----------------------------------------------
 __global__ void print_all_entries_internal(GpuHashTable* hash_table) {

@@ -23,7 +23,7 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 static constexpr uint64_t NUM_ELEMENTS = 1 << 20;  // 1M elements
 static constexpr uint KEY_SIZE = 32;
 static constexpr uint WORD_SIZE = 64;
-static constexpr uint BATCH_SIZE = 1;
+static constexpr uint BATCH_SIZE = 100000;
 static constexpr uint CPU_BATCH_SIZE = 10;
 
 static constexpr uint BLOCK_SIZE = 256;
@@ -185,6 +185,43 @@ class CpuHashTable {
 };
 
 // ----------------------------------------------
+// Hybrid Hash Table
+// ----------------------------------------------
+
+struct HybridHashEntryBatch : CudaManagedMemory {
+    HybridHashEntryBatch() {
+        memset(&keys, 0, BATCH_SIZE * KEY_SIZE);
+        memset(&locations, 0, BATCH_SIZE);
+        memset(&words, 0, BATCH_SIZE & WORD_SIZE);
+    }
+
+    char keys[BATCH_SIZE][KEY_SIZE];
+    uint32_t locations[BATCH_SIZE];
+    char words[BATCH_SIZE][WORD_SIZE];
+};
+
+struct HybridHashEntryInternal {
+    bool occupied;
+    char key[KEY_SIZE];
+};
+
+class HybridHashTable {
+  public:
+    HybridHashTable();
+
+    void insert_batch(HybridHashEntryBatch* entry_batch, uint num_entries);
+
+    void find_batch(HybridHashEntryBatch* entry_batch, uint num_entries);
+
+    void debug_print_entries();
+
+    uint32_t find_location(char key[KEY_SIZE]);
+
+    HybridHashEntryInternal key_storage[NUM_ELEMENTS];
+    GpuHashTable* word_storage;
+};
+
+// ----------------------------------------------
 // GPU Hash Table Interface
 // ----------------------------------------------
 // These functions internally make kernel calls and synchronize afterwards.
@@ -198,7 +235,11 @@ void hash_find(GpuHashTable* hash_table, GpuHashEntry* entry);
 
 void hash_insert_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries);
 
+void hash_insert_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries);
+
 void hash_find_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries);
+
+void hash_find_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries);
 
 // ----------------------------------------------
 // Debugging Stuff
