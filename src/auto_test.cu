@@ -1,7 +1,10 @@
 #include <chrono>
 #include <ctime>
 #include <random>
+#include <thread>
 #include <unordered_map>
+
+#include "cuda_profiler_api.h"
 
 #include "hash.h"
 #include "utils.h"
@@ -20,7 +23,7 @@ using Generator = std::mt19937;
 using DataMap = std::unordered_map<std::string, std::string>;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-static constexpr uint NUM_TEST_ENTRIES = 1'000'000;
+static constexpr uint NUM_TEST_ENTRIES = 1000000;
 
 void checkEntryEqual(GpuHashEntry& in, GpuHashEntry& out) {
     if (in == out) {
@@ -162,10 +165,22 @@ void test_hybrid_table(DataMap& test_entries) {
     HybridHashTable* h = new HybridHashTable;
     cudaCheckErrors();
 
-    HybridHashEntryBatch* in_batch = new HybridHashEntryBatch;
+    static constexpr uint NUM_BATCHES = (NUM_TEST_ENTRIES / BATCH_SIZE) + (NUM_TEST_ENTRIES % BATCH_SIZE != 0 ? 1 : 0);
+    static_assert(NUM_BATCHES <= 10, "Protection from allocation too much memory");
+
+    HybridHashEntryBatch* in_batches[NUM_BATCHES];
+    for (uint i = 0; i < NUM_BATCHES; i++) {
+        in_batches[i] = new HybridHashEntryBatch;
+    }
+    uint in_batch_index = 0;
+
+    // TODO if we use multiple in_batches we don't need to synchronize insertions
+    HybridHashEntryBatch* in_batch = in_batches[in_batch_index];
     HybridHashEntryBatch* out_batch = new HybridHashEntryBatch;
     cudaDeviceSynchronize();
     cudaCheckErrors();
+
+    cudaProfilerStart();
 
     // Iterate through map and batch insert entries
     time_t t0_insert = get_time_us();
@@ -180,14 +195,16 @@ void test_hybrid_table(DataMap& test_entries) {
         // Insert entries using max BATCH_SIZE
         if (batch_index == BATCH_SIZE) {
             h->insert_batch(in_batch, BATCH_SIZE);
-            cudaCheckErrors();
+            in_batch_index++;
+            in_batch = in_batches[in_batch_index];
+            // cudaCheckErrors();
             batch_index = 0;
         }
     }
     // Insert remaining entries
     if (batch_index > 0 && batch_index < BATCH_SIZE) {
         h->insert_batch(in_batch, batch_index);
-        cudaCheckErrors();
+        // cudaCheckErrors();
     }
     time_t t1_insert = get_time_us();
     std::cout << "Hybrid Insert time: " << t1_insert - t0_insert << " us" << std::endl;
@@ -206,7 +223,7 @@ void test_hybrid_table(DataMap& test_entries) {
         // Insert entries using max BATCH_SIZE
         if (batch_index == BATCH_SIZE) {
             h->find_batch(out_batch, BATCH_SIZE);
-            cudaCheckErrors();
+            // cudaCheckErrors();
 
             checkHybridBatchedOutput(test_entries, out_batch, BATCH_SIZE);
             batch_index = 0;
@@ -215,12 +232,14 @@ void test_hybrid_table(DataMap& test_entries) {
     // Check remaining entries
     if (batch_index > 0 && batch_index < BATCH_SIZE) {
         h->find_batch(out_batch, batch_index);
-        cudaCheckErrors();
+        // cudaCheckErrors();
 
         checkHybridBatchedOutput(test_entries, out_batch, batch_index);
     }
     time_t t1_find = get_time_us();
     std::cout << "Hybrid Find time: " << t1_find - t0_find << " us" << std::endl;
+
+    cudaProfilerStop();
 
     // print_all_entries(h);
 

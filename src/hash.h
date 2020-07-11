@@ -21,8 +21,8 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 
 // Constants for hash table
 static constexpr uint64_t NUM_ELEMENTS = 1 << 20;  // 1M elements
-static constexpr uint KEY_SIZE = 32;
-static constexpr uint WORD_SIZE = 64;
+static constexpr uint KEY_SIZE = 16;
+static constexpr uint WORD_SIZE = 16;
 static constexpr uint BATCH_SIZE = 100000;
 static constexpr uint CPU_BATCH_SIZE = 10;
 
