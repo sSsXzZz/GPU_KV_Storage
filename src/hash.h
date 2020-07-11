@@ -140,18 +140,7 @@ class GpuHashEntryBatch : public CudaManagedMemory {
 
 class GpuHashTable : public CudaMemory {
   public:
-    // Inserts the entry into the hash table
-    __device__ void insert_entry(GpuHashEntry* user_entry);
-
-    // Finds the entry in the hash table. The word in the user_entry is set to the word found.
-    __device__ void find_entry(GpuHashEntry* user_entry);
-
-    // Returns the pointer to the entry at the given index
-    __device__ HashEntryInternal* get_entry(uint32_t index);
-
-    HashEntryInternal entries[NUM_ELEMENTS];
-
-  private:
+    char words[NUM_ELEMENTS][WORD_SIZE];
 };
 
 // ----------------------------------------------
@@ -221,32 +210,11 @@ class HybridHashTable {
     GpuHashTable* word_storage;
 };
 
-// ----------------------------------------------
-// GPU Hash Table Interface
-// ----------------------------------------------
-// These functions internally make kernel calls and synchronize afterwards.
-//
-
-void init_hash_table(GpuHashTable* hash_table);
-
-void hash_insert(GpuHashTable* hash_table, GpuHashEntry* entry);
-
-void hash_find(GpuHashTable* hash_table, GpuHashEntry* entry);
-
-void hash_insert_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries);
-
-void hash_insert_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries);
-
-void hash_find_batch(GpuHashTable* hash_table, GpuHashEntryBatch* entry_batch, uint num_entries);
-
-void hash_find_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries);
+}  // namespace hash
 
 // ----------------------------------------------
 // Debugging Stuff
 // ----------------------------------------------
-void print_all_entries(GpuHashTable* hash_table);
-
-}  // namespace hash
 
 #include <execinfo.h>
 inline void print_trace(void) {
