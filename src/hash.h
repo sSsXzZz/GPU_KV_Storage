@@ -140,7 +140,7 @@ class GpuHashEntryBatch : public CudaManagedMemory {
 
 class GpuHashTable : public CudaMemory {
   public:
-    char words[NUM_ELEMENTS][WORD_SIZE];
+    HashEntryInternal entries[NUM_ELEMENTS];
 };
 
 // ----------------------------------------------
