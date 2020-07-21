@@ -122,6 +122,7 @@ __global__ void gpu_insert_batch(GpuHashTable* hash_table, HybridHashEntryBatch*
         char* word = entry_batch->words[i];
         uint32_t location = entry_batch->locations[i];
 
+        hash_table->entries[location].occupied = true;
         std::memcpy(&hash_table->entries[location].key, key, KEY_SIZE);
         std::memcpy(&hash_table->entries[location].word, word, WORD_SIZE);
     }
@@ -131,20 +132,21 @@ __global__ void gpu_find_batch(GpuHashTable* hash_table, HybridHashEntryBatch* e
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
     for (uint32_t i = index; i < num_entries; i += stride) {
-        // find location (hash_val) that memory is stored
+        // find location (location) that memory is stored
         char* key = entry_batch->keys[i];
-        uint32_t hash_val = hash_function(key);
-        // TODO handle case where key is NOT in the table
-        // loop until we find a matching key
-        while (!device_memcmp(key, hash_table->entries[hash_val].key, KEY_SIZE)) {
-            if (device_memcmp(key, hash_table->entries[hash_val].key, KEY_SIZE) == true) {
+        uint32_t location = hash_function(key);
+        HashEntryInternal* entry = &hash_table->entries[location];
+        while (entry->occupied) {
+            // IF a match is found, copy the word and move onto next batch entry
+            if (device_memcmp(key, entry->key, KEY_SIZE) == true) {
+                std::memcpy(&entry_batch->words[i], &entry->word, WORD_SIZE);
                 break;
             }
-            hash_val = (hash_val + 1) % NUM_ELEMENTS;
+            location = (location + 1) % NUM_ELEMENTS;
+            entry = &hash_table->entries[location];
         }
-        // uint32_t location = entry_batch->locations[i];
 
-        std::memcpy(&entry_batch->words[i], &hash_table->entries[hash_val].word, WORD_SIZE);
+        // Do nothing if the entry was not found
     }
 }
 
