@@ -35,6 +35,9 @@ class HashTableTestBase {
     // Finds every entry in the given DataMap
     virtual void find_all(DataMap& test_data, bool check_data) = 0;
 
+    // Clears all entries in hash table
+    virtual void clear() = 0;
+
     void test_all(DataMap& test_data, bool check_data) {
         time_t t0_insert = get_time_us();
         insert_all(test_data);
@@ -81,6 +84,10 @@ class CpuHashTableTest : public HashTableTestBase {
         delete h;
         delete in_batch;
         delete out_batch;
+    }
+
+    void clear() override {
+        h->clear();
     }
 
   protected:
@@ -154,6 +161,10 @@ class HybridHashTableTest : public HashTableTestBase {
             cudaFreeHost(&in_batches[i]);
         }
         cudaFreeHost(&out_batch);
+    }
+
+    void clear() override {
+        h->clear();
     }
 
   protected:

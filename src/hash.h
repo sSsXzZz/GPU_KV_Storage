@@ -105,6 +105,9 @@ class CpuHashTable {
     // Finds the entry in the hash table
     void find_entry(CpuHashEntry* user_entry);
 
+    // Clears all entries from hash table
+    void clear();
+
     void debug_print_entries();
 
     HashEntryInternal entries[NUM_ELEMENTS];
@@ -148,6 +151,9 @@ class HybridHashTable {
     void insert_batch(HybridHashEntryBatch* entry_batch, uint num_entries);
 
     void find_batch(HybridHashEntryBatch* entry_batch, uint num_entries);
+
+    // Clears all entries from hash table
+    void clear();
 
     void debug_print_entries();
 

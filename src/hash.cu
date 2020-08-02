@@ -34,10 +34,7 @@ namespace hash {
 // ----------------------------------------------
 
 void CpuHashTable::init() {
-    for (int i = 0; i < NUM_ELEMENTS; i++) {
-        HashEntryInternal* entry = &entries[i];
-        std::memset(entry, 0, sizeof(HashEntryInternal));
-    }
+    std::memset(entries, 0, sizeof(HashEntryInternal) * NUM_ELEMENTS);
 }
 
 void CpuHashTable::insert_entry(CpuHashEntry* user_entry) {
@@ -89,6 +86,10 @@ void CpuHashTable::find_entry(CpuHashEntry* user_entry) {
     // key not found, make sure the word we send back is empty
     user_entry->word[0] = 0;
     return;
+}
+
+void CpuHashTable::clear() {
+    std::memset(entries, 0, sizeof(HashEntryInternal) * NUM_ELEMENTS);
 }
 
 void CpuHashTable::debug_print_entries() {
@@ -155,9 +156,7 @@ HybridHashTable::HybridHashTable() {
     cudaDeviceSynchronize();
     cudaCheckErrors();
 
-    for (uint32_t i = 0; i < NUM_ELEMENTS; i++) {
-        std::memset(&key_storage[i], 0, sizeof(HybridHashEntryInternal));
-    }
+    std::memset(key_storage, 0, sizeof(HybridHashEntryInternal) * NUM_ELEMENTS);
 
     gpu_init<<<NUM_BLOCKS_ALL, BLOCK_SIZE>>>(word_storage);
     cudaDeviceSynchronize();
@@ -216,6 +215,11 @@ void HybridHashTable::find_batch(HybridHashEntryBatch* entry_batch, uint num_ent
     /*printf("find_batch - %lu us to find locations\n", get_time_us() - t0);*/
 
     gpu_find_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(word_storage, entry_batch, num_entries);
+
+void HybridHashTable::clear() {
+    std::memset(key_storage, 0, sizeof(HybridHashEntryInternal) * NUM_ELEMENTS);
+    cudaMemset(word_storage, 0, sizeof(GpuHashTable));
+    cudaCheckErrors();
     cudaDeviceSynchronize();
 }
 
