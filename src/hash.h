@@ -81,69 +81,6 @@ class CudaMemory {
 };
 
 // ----------------------------------------------
-// GPU Hash Table
-// ----------------------------------------------
-//
-
-class GpuHashEntry : public CudaManagedMemory {
-  public:
-    GpuHashEntry() {
-        std::memset(key, 0, sizeof(key));
-        std::memset(word, 0, sizeof(word));
-    }
-
-    GpuHashEntry(char* k) : GpuHashEntry() {
-        std::strcpy(key, k);
-    }
-
-    GpuHashEntry(char* k, char* w) : GpuHashEntry(k) {
-        std::strcpy(word, w);
-    }
-
-    GpuHashEntry(GpuHashEntry& h) = delete;
-    GpuHashEntry(GpuHashEntry&& h) = delete;
-
-    void set(char* k) {
-        std::strcpy(key, k);
-    }
-
-    void set(char* k, char* w) {
-        std::strcpy(key, k);
-        std::strcpy(word, w);
-    }
-
-    char key[KEY_SIZE];
-    char word[WORD_SIZE];
-};
-inline bool operator==(const GpuHashEntry& a, const GpuHashEntry& b) {
-    return (std::memcmp(a.key, b.key, KEY_SIZE) == 0) && (std::memcmp(a.word, b.word, WORD_SIZE) == 0);
-}
-inline std::ostream& operator<<(std::ostream& outs, const GpuHashEntry& entry) {
-    return outs << "(" << entry.key << ", " << entry.word << ")";
-}
-
-class GpuHashEntryBatch : public CudaManagedMemory {
-  public:
-    GpuHashEntryBatch() {
-        memset(entries, 0, sizeof(entries));
-    }
-    GpuHashEntryBatch(GpuHashEntryBatch& h) = delete;
-    GpuHashEntryBatch(GpuHashEntryBatch&& h) = delete;
-
-    GpuHashEntry entries[BATCH_SIZE];
-
-    // Returns the entry at the given index
-    inline GpuHashEntry& at(std::size_t i) {
-        return entries[i];
-    }
-};
-
-class GpuHashTable : public CudaMemory {
-  public:
-    HashEntryInternal entries[NUM_ELEMENTS];
-};
-
-// ----------------------------------------------
 // CPU Hash Table
 // ----------------------------------------------
 
@@ -170,6 +107,16 @@ class CpuHashTable {
 
     void debug_print_entries();
 
+    HashEntryInternal entries[NUM_ELEMENTS];
+};
+
+// ----------------------------------------------
+// GPU Hash Table
+// ----------------------------------------------
+//
+
+class GpuHashTable : public CudaMemory {
+  public:
     HashEntryInternal entries[NUM_ELEMENTS];
 };
 
