@@ -199,22 +199,18 @@ void HybridHashTable::insert_batch(HybridHashEntryBatch* entry_batch, uint num_e
         key_storage[location].occupied = true;
         std::memcpy(key_storage[location].key, entry_batch->keys[i], KEY_SIZE);
     }
-    printf("insert_batch - %lu us to find locations\n", get_time_us() - t0);
+    // printf("insert_batch - %lu us to find locations\n", get_time_us() - t0);
 
     // TODO change this to transfer only words
-    gpu_insert_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(word_storage, entry_batch, num_entries);
-    // cudaDeviceSynchronize();
+    cudaMemcpy(tmp_batch, entry_batch, sizeof(HybridHashEntryBatch), cudaMemcpyHostToDevice);
+    gpu_insert_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(word_storage, tmp_batch, num_entries);
 }
 
 void HybridHashTable::find_batch(HybridHashEntryBatch* entry_batch, uint num_entries) {
-    // iterate through entries, find the key location, and populate the internal_batch with the location
-    /*time_t t0 = get_time_us();*/
-    /*for (uint i = 0; i < num_entries; i++) {*/
-    /*entry_batch->locations[i] = find_location(entry_batch->keys[i]);*/
-    /*}*/
-    /*printf("find_batch - %lu us to find locations\n", get_time_us() - t0);*/
-
-    gpu_find_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(word_storage, entry_batch, num_entries);
+    cudaMemcpy(tmp_batch, entry_batch, sizeof(HybridHashEntryBatch), cudaMemcpyHostToDevice);
+    gpu_find_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(word_storage, tmp_batch, num_entries);
+    cudaMemcpy(entry_batch, tmp_batch, sizeof(HybridHashEntryBatch), cudaMemcpyDeviceToHost);
+    cudaDeviceSynchronize();
 
 void HybridHashTable::clear() {
     std::memset(key_storage, 0, sizeof(HybridHashEntryInternal) * NUM_ELEMENTS);

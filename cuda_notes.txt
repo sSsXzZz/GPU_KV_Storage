@@ -1,7 +1,16 @@
 Design Notes
-* Store copy of keys/words in both GPU/CPU
- * CPU handles race conditions & all that, GPU can search faster
-* Speedup by removing synchronization in insertion
-* Colocate keys/words on GPU for better cache performance, push the system over the CPU implementation in terms of performance
 * [CONFIRM] Some difference can be observed by making sure (1 + KEY_SIZE + WORD_SIZE == 16 OR 32)
-* using prefetchasync before find helps speedup find
+* [CONFIRM] Using async memcpy & streams
+
+* Speed after co-location optimization
+---------------------------------------------------
+Hybrid Avg Insert time: 295908 us
+Hybrid Avg Find time: 112751 us
+Hybrid Tested 100 times
+
+* Speedup from switching to pinned memory below
+---------------------------------------------------
+Hybrid Avg Insert time: 217784 us
+Hybrid Avg Find time: 90876 us
+Hybrid Tested 100 times
+
