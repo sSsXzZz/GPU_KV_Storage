@@ -21,6 +21,8 @@ using DataMap = std::unordered_map<std::string, std::string>;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 static constexpr uint NUM_TEST_ENTRIES = 1000000;
+static constexpr uint NUM_TEST_TIMES = 100;
+static constexpr bool CHECK_DATA = false;
 
 class HashTableTestBase {
   public:
@@ -57,8 +59,10 @@ class HashTableTestBase {
             std::accumulate(insert_all_times.begin(), insert_all_times.end(), 0) / insert_all_times.size();
         time_t find_all_avg = std::accumulate(find_all_times.begin(), find_all_times.end(), 0) / find_all_times.size();
 
+        std::cout << "---------------------------------------------------\n";
         std::cout << name_ << " Avg Insert time: " << insert_all_avg << " us" << std::endl;
         std::cout << name_ << " Avg Find time: " << find_all_avg << " us" << std::endl;
+        std::cout << name_ << " Tested " << insert_all_times.size() << " times" << std::endl;
     }
 
   protected:
@@ -272,24 +276,32 @@ int main(void) {
     UniformDistribution key_size(1, KEY_SIZE - 1);
     UniformDistribution word_size(1, WORD_SIZE - 1);
 
-    // Generate random key, value pairs
-    DataMap test_entries;
-    for (uint i = 0; i < NUM_TEST_ENTRIES; i++) {
-        std::string key = get_random_string(char_picker, generator, key_size(generator), KEY_SIZE);
-        std::string word = get_random_string(char_picker, generator, word_size(generator), WORD_SIZE);
-
-        // std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
-
-        test_entries[key] = word;
-    }
-
     HybridHashTableTest hybrid_tester("Hybrid");
-    cudaProfilerStart();
-    hybrid_tester.test_all(test_entries, false);
-    cudaProfilerStop();
-
     CpuHashTableTest cpu_tester("CPU");
-    cpu_tester.test_all(test_entries, false);
+    for (uint n_test = 0; n_test < NUM_TEST_TIMES; n_test++) {
+        // Generate random key, value pairs
+        DataMap test_data;
+        for (uint n_entry = 0; n_entry < NUM_TEST_ENTRIES; n_entry++) {
+            std::string key = get_random_string(char_picker, generator, key_size(generator), KEY_SIZE);
+            std::string word = get_random_string(char_picker, generator, word_size(generator), WORD_SIZE);
+
+            // std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
+
+            test_data[key] = word;
+        }
+
+        std::cout << "Running test " << n_test << "/" << NUM_TEST_TIMES << std::endl;
+        cudaProfilerStart();
+        hybrid_tester.test_all(test_data, CHECK_DATA);
+        cudaProfilerStop();
+
+        cpu_tester.test_all(test_data, CHECK_DATA);
+
+        hybrid_tester.clear();
+        cpu_tester.clear();
+    }
+    hybrid_tester.print_averages();
+    cpu_tester.print_averages();
 
     return 0;
 }
