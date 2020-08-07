@@ -282,7 +282,7 @@ int main(void) {
     for (uint n_test = 0; n_test < NUM_TEST_TIMES; n_test++) {
         // Generate random key, value pairs
         DataMap test_data;
-        for (uint n_entry = 0; n_entry < NUM_TEST_ENTRIES; n_entry++) {
+        while (test_data.size() < NUM_TEST_ENTRIES) {
             std::string key = get_random_string(char_picker, generator, key_size(generator), KEY_SIZE);
             std::string word = get_random_string(char_picker, generator, word_size(generator), WORD_SIZE);
 
