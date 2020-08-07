@@ -161,6 +161,12 @@ class HybridHashTable {
 
     HybridHashEntryInternal key_storage[NUM_ELEMENTS];
     GpuHashTable* word_storage;
+
+    static constexpr uint MAX_STREAMS = 10;
+    // A buffer will be needed for every stream
+    HybridHashEntryBatch* batch_bufs[MAX_STREAMS];
+    cudaStream_t streams[MAX_STREAMS];
+    uint stream_count;
 };
 
 }  // namespace hash
