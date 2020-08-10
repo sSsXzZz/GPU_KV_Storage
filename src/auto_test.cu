@@ -22,7 +22,15 @@ using DataMap = std::unordered_map<std::string, std::string>;
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 static constexpr uint NUM_TEST_ENTRIES = 1000000;
 static constexpr uint NUM_TEST_TIMES = 100;
+static constexpr uint NUM_THREADS = 10;
 static constexpr bool CHECK_DATA = false;
+
+struct KVPair {
+    std::string key;
+    std::string word;
+};
+
+std::vector<KVPair> data_copy;
 
 class HashTableTestBase {
   public:
@@ -154,8 +162,8 @@ class HybridHashTableTest : public HashTableTestBase {
 
         for (uint i = 0; i < NUM_BATCHES; i++) {
             cudaMallocHost(&in_batches[i], sizeof(HybridHashEntryBatch));
+            cudaMallocHost(&out_batches[i], sizeof(HybridHashEntryBatch));
         }
-        cudaMallocHost(&out_batch, sizeof(HybridHashEntryBatch));
         cudaDeviceSynchronize();
         cudaCheckErrors();
     }
@@ -164,8 +172,8 @@ class HybridHashTableTest : public HashTableTestBase {
         delete h;
         for (uint i = 0; i < NUM_BATCHES; i++) {
             cudaFreeHost(&in_batches[i]);
+            cudaFreeHost(&out_batches[i]);
         }
-        cudaFreeHost(&out_batch);
     }
 
     void clear() override {
@@ -210,6 +218,11 @@ class HybridHashTableTest : public HashTableTestBase {
             auto it = test_data.find(key);
             if (it == test_data.end()) {
                 printf("Key %s not found in the test data map\n", key.c_str());
+                printf("Hex dump of key: ");
+                for(uint i = 0; i < KEY_SIZE; i++) {
+                    printf("0x%x ", key.c_str()[i]);
+                }
+                printf("\n");
                 abort_with_trace();
             }
             std::string word = test_data[key];
@@ -218,12 +231,38 @@ class HybridHashTableTest : public HashTableTestBase {
                 // printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
             } else {
                 printf("GPU: entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
+
+                printf("Hex dump: entry(");
+                for(uint i = 0; i < KEY_SIZE; i++) {
+                    printf("%x", key.c_str()[i]);
+                }
+                printf(", ");
+                for(uint i = 0; i < WORD_SIZE; i++) {
+                    printf("%x", word.c_str()[i]);
+                }
+
+                printf(") map_entry(");
+                for(uint i = 0; i < KEY_SIZE; i++) {
+                    printf("%x", out_key[i]);
+                }
+                printf(", ");
+                for(uint i = 0; i < WORD_SIZE; i++) {
+                    printf("%x", out_word[i]);
+                }
+                printf(")\n");
+
                 abort_with_trace();
             }
         }
     }
 
     void find_all(DataMap& test_data, bool check_data) override {
+        find_all_mt(test_data, check_data);
+        return;
+
+        uint out_batch_index = 0;
+        HybridHashEntryBatch* out_batch = in_batches[out_batch_index];
+
         uint batch_index = 0;
         for (auto& entry : test_data) {
             const std::string& key = entry.first;
@@ -240,6 +279,9 @@ class HybridHashTableTest : public HashTableTestBase {
                     compare_data(test_data, out_batch, BATCH_SIZE);
                 }
                 batch_index = 0;
+
+                out_batch_index++;
+                out_batch = in_batches[out_batch_index];
             }
         }
         // Check remaining entries
@@ -253,12 +295,67 @@ class HybridHashTableTest : public HashTableTestBase {
         }
     }
 
+    /*
+        TODO: cleanup the data_copy thing
+     */
+    void find_all_mt(DataMap& test_data, bool check_data) {
+        static_assert(NUM_BATCHES >= NUM_THREADS, "More batches than threads means indexing logic won't work");
+        std::vector<std::thread> threads;
+        for (uint i = 0; i < NUM_THREADS; i++) {
+            threads.emplace_back([&, index = i]() {
+                // Test entries are broken up so threads have equal number to process
+                uint start_index = (NUM_TEST_ENTRIES / NUM_THREADS) * index;
+                uint end_index = (NUM_TEST_ENTRIES / NUM_THREADS) * (index + 1);
+
+                // There should be 1 out_batch per request that will be made
+                // Figure out which batches this thread is using
+                uint out_batch_index = (NUM_BATCHES / NUM_THREADS) * index;
+                HybridHashEntryBatch* out_batch = out_batches[out_batch_index];
+
+                uint batch_index = 0;
+                for (uint i = start_index; i < end_index; i++) {
+                    const std::string& key = data_copy[i].key;
+                    std::memcpy(&out_batch->keys[batch_index], key.c_str(), key.size());
+                    std::memset(&out_batch->words[batch_index], 0, WORD_SIZE);
+                    batch_index++;
+
+                    // Insert entries using max BATCH_SIZE
+                    if (batch_index == BATCH_SIZE) {
+                        h->find_batch(out_batch, BATCH_SIZE);
+
+                        if (check_data) {
+                            cudaCheckErrors();
+                            compare_data(test_data, out_batch, BATCH_SIZE);
+                        }
+                        batch_index = 0;
+
+                        out_batch_index++;
+                        out_batch = out_batches[out_batch_index];
+                    }
+                }
+                // Insert remaining entries
+                if (batch_index > 0 && batch_index < BATCH_SIZE) {
+                    h->find_batch(out_batch, batch_index);
+
+                    if (check_data) {
+                        cudaCheckErrors();
+                        compare_data(test_data, out_batch, batch_index);
+                    }
+                }
+            });
+        }
+
+        for (std::thread& t : threads) {
+            t.join();
+        }
+    }
+
   protected:
     static constexpr uint NUM_BATCHES = (NUM_TEST_ENTRIES / BATCH_SIZE) + (NUM_TEST_ENTRIES % BATCH_SIZE != 0 ? 1 : 0);
 
     HybridHashTable* h;
     HybridHashEntryBatch* in_batches[NUM_BATCHES];
-    HybridHashEntryBatch* out_batch;
+    HybridHashEntryBatch* out_batches[NUM_BATCHES];
 };
 
 std::string get_random_string(UniformDistribution& char_picker, Generator& generator, uint used_space, uint length) {
@@ -280,15 +377,24 @@ int main(void) {
     HybridHashTableTest hybrid_tester("Hybrid");
     CpuHashTableTest cpu_tester("CPU");
     for (uint n_test = 0; n_test < NUM_TEST_TIMES; n_test++) {
+        data_copy.clear();
+
         // Generate random key, value pairs
         DataMap test_data;
         while (test_data.size() < NUM_TEST_ENTRIES) {
             std::string key = get_random_string(char_picker, generator, key_size(generator), KEY_SIZE);
             std::string word = get_random_string(char_picker, generator, word_size(generator), WORD_SIZE);
 
-            // std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
+            //std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
 
             test_data[key] = word;
+        }
+
+        for (auto& entry : test_data) {
+            KVPair kv_pair;
+            kv_pair.key = std::string(entry.first);
+            kv_pair.word = std::string(entry.second);
+            data_copy.emplace_back(std::move(kv_pair));
         }
 
         std::cout << "Running test " << n_test << "/" << NUM_TEST_TIMES << std::endl;

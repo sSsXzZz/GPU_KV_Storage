@@ -14,6 +14,7 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <mutex>
 
 // ----------------------------------------------
 // Constants
@@ -167,6 +168,7 @@ class HybridHashTable {
     HybridHashEntryBatch* batch_bufs[MAX_STREAMS];
     cudaStream_t streams[MAX_STREAMS];
     uint stream_count;
+    std::mutex find_lock;
 };
 
 }  // namespace hash
