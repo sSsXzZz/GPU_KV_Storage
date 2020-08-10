@@ -89,7 +89,9 @@ class CpuHashTableTest : public HashTableTestBase {
         out_batch = new CpuHashEntryBatch;
 
         in_entry = new CpuHashEntry;
-        out_entry = new CpuHashEntry;
+        for (uint i = 0; i < NUM_THREADS; i++) {
+            out_entries[i] = new CpuHashEntry;
+        }
     }
 
     ~CpuHashTableTest() {
@@ -132,8 +134,12 @@ class CpuHashTableTest : public HashTableTestBase {
         }
     }
 
-    // TODO test out a multithreaded find_all
     void find_all(DataMap& test_data, bool check_data) override {
+        find_all_mt(test_data, check_data);
+        return;
+
+        CpuHashEntry* out_entry = out_entries[0];
+
         for (auto& entry : test_data) {
             const std::string& key = entry.first;
 
@@ -147,11 +153,40 @@ class CpuHashTableTest : public HashTableTestBase {
         }
     }
 
+    void find_all_mt(DataMap& test_data, bool check_data) {
+        std::vector<std::thread> threads;
+        for (uint i = 0; i < NUM_THREADS; i++) {
+            threads.emplace_back([&, index = i]() {
+                CpuHashEntry* out_entry = out_entries[index];
+
+                // Test entries are broken up so threads have equal number to process
+                uint start_index = (NUM_TEST_ENTRIES / NUM_THREADS) * index;
+                uint end_index = (NUM_TEST_ENTRIES / NUM_THREADS) * (index + 1);
+
+                for (uint i = start_index; i < end_index; i++) {
+                    const std::string& key = data_copy[i].key;
+
+                    std::memcpy(&out_entry->key, key.c_str(), key.size());
+                    std::memset(&out_entry->word, 0, WORD_SIZE);
+
+                    h->find_entry(out_entry);
+                    if (check_data) {
+                        compare_data(test_data, out_entry);
+                    }
+                }
+            });
+        }
+
+        for (std::thread& t : threads) {
+            t.join();
+        }
+    }
+
     CpuHashTable* h;
     CpuHashEntryBatch* in_batch;
     CpuHashEntryBatch* out_batch;
     CpuHashEntry* in_entry;
-    CpuHashEntry* out_entry;
+    CpuHashEntry* out_entries[NUM_THREADS];
 };
 
 class HybridHashTableTest : public HashTableTestBase {
@@ -219,7 +254,7 @@ class HybridHashTableTest : public HashTableTestBase {
             if (it == test_data.end()) {
                 printf("Key %s not found in the test data map\n", key.c_str());
                 printf("Hex dump of key: ");
-                for(uint i = 0; i < KEY_SIZE; i++) {
+                for (uint i = 0; i < KEY_SIZE; i++) {
                     printf("0x%x ", key.c_str()[i]);
                 }
                 printf("\n");
@@ -233,20 +268,20 @@ class HybridHashTableTest : public HashTableTestBase {
                 printf("GPU: entry(%s, %s) != map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
 
                 printf("Hex dump: entry(");
-                for(uint i = 0; i < KEY_SIZE; i++) {
+                for (uint i = 0; i < KEY_SIZE; i++) {
                     printf("%x", key.c_str()[i]);
                 }
                 printf(", ");
-                for(uint i = 0; i < WORD_SIZE; i++) {
+                for (uint i = 0; i < WORD_SIZE; i++) {
                     printf("%x", word.c_str()[i]);
                 }
 
                 printf(") map_entry(");
-                for(uint i = 0; i < KEY_SIZE; i++) {
+                for (uint i = 0; i < KEY_SIZE; i++) {
                     printf("%x", out_key[i]);
                 }
                 printf(", ");
-                for(uint i = 0; i < WORD_SIZE; i++) {
+                for (uint i = 0; i < WORD_SIZE; i++) {
                     printf("%x", out_word[i]);
                 }
                 printf(")\n");
@@ -385,7 +420,7 @@ int main(void) {
             std::string key = get_random_string(char_picker, generator, key_size(generator), KEY_SIZE);
             std::string word = get_random_string(char_picker, generator, word_size(generator), WORD_SIZE);
 
-            //std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
+            // std::cout << "Generated entry (" << key << ", " << word << ")" << std::endl;
 
             test_data[key] = word;
         }
