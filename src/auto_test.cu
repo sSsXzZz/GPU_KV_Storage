@@ -12,8 +12,10 @@ using hash::CpuHashEntry;
 using hash::CpuHashEntryBatch;
 using hash::CpuHashTable;
 using hash::GpuHashTable;
-using hash::HybridHashEntryBatch;
+using hash::HybridFindBatchInput;
+using hash::HybridFindBatchOutput;
 using hash::HybridHashTable;
+using hash::HybridInsertBatch;
 
 using UniformDistribution = std::uniform_int_distribution<uint>;
 using Generator = std::mt19937;
@@ -200,8 +202,9 @@ class HybridHashTableTest : public HashTableTestBase {
         cudaCheckErrors();
 
         for (uint i = 0; i < NUM_BATCHES; i++) {
-            cudaMallocHost(&in_batches[i], sizeof(HybridHashEntryBatch));
-            cudaMallocHost(&out_batches[i], sizeof(HybridHashEntryBatch));
+            cudaMallocHost(&insert_batches[i], sizeof(HybridInsertBatch));
+            cudaMallocHost(&find_input_batches[i], sizeof(HybridFindBatchInput));
+            cudaMallocHost(&find_output_batches[i], sizeof(HybridFindBatchOutput));
         }
         cudaDeviceSynchronize();
         cudaCheckErrors();
@@ -210,8 +213,9 @@ class HybridHashTableTest : public HashTableTestBase {
     ~HybridHashTableTest() {
         delete h;
         for (uint i = 0; i < NUM_BATCHES; i++) {
-            cudaFreeHost(&in_batches[i]);
-            cudaFreeHost(&out_batches[i]);
+            cudaFreeHost(&insert_batches[i]);
+            cudaFreeHost(&find_input_batches[i]);
+            cudaFreeHost(&find_output_batches[i]);
         }
     }
 
@@ -221,37 +225,42 @@ class HybridHashTableTest : public HashTableTestBase {
 
   protected:
     void insert_all(DataMap& test_data) override {
-        uint in_batch_index = 0;
-        HybridHashEntryBatch* in_batch = in_batches[in_batch_index];
+        uint insert_batch_index = 0;
+        HybridInsertBatch* insert_batch = insert_batches[insert_batch_index];
 
         uint batch_index = 0;  // Count of entries in this batch
         for (auto& entry : test_data) {
             const std::string& key = entry.first;
             const std::string& word = entry.second;
-            std::memcpy(&in_batch->keys[batch_index], key.c_str(), key.size());
-            std::memcpy(&in_batch->words[batch_index], word.c_str(), word.size());
+            std::memcpy(&insert_batch->keys[batch_index], key.c_str(), key.size());
+            std::memcpy(&insert_batch->words[batch_index], word.c_str(), word.size());
             batch_index++;
 
             // Insert entries using max BATCH_SIZE
             if (batch_index == BATCH_SIZE) {
-                h->insert_batch(in_batch, BATCH_SIZE);
-                in_batch_index++;
-                in_batch = in_batches[in_batch_index];
+                h->insert_batch(insert_batch, BATCH_SIZE);
+                insert_batch_index++;
+                insert_batch = insert_batches[insert_batch_index];
                 // cudaCheckErrors();
                 batch_index = 0;
             }
         }
         // Insert remaining entries
         if (batch_index > 0 && batch_index < BATCH_SIZE) {
-            h->insert_batch(in_batch, batch_index);
+            h->insert_batch(insert_batch, batch_index);
             // cudaCheckErrors();
+        }
+
+        if (USE_MULTITHREADED) {
+            h->sync_inserts();
         }
     }
 
-    void compare_data(DataMap& test_data, HybridHashEntryBatch* out_batch, uint num_entries) {
+    void compare_data(DataMap& test_data, HybridFindBatchInput* input_batch, HybridFindBatchOutput* output_batch,
+                      uint num_entries) {
         for (uint i = 0; i < num_entries; i++) {
-            const char* out_key = out_batch->keys[i];
-            const char* out_word = out_batch->words[i];
+            const char* out_key = input_batch->keys[i];
+            const char* out_word = output_batch->words[i];
 
             std::string key(out_key, KEY_SIZE);
             auto it = test_data.find(key);
@@ -265,6 +274,11 @@ class HybridHashTableTest : public HashTableTestBase {
                 abort_with_trace();
             }
             std::string word = test_data[key];
+
+            if (!output_batch->entry_found) {
+                printf("Entry with key %s was not found in the hash table!\n", key.c_str());
+                abort_with_trace();
+            }
 
             if (strcmp(key.c_str(), out_key) == 0 && strcmp(word.c_str(), out_word) == 0) {
                 // printf("entry(%s, %s) == map_entry(%s, %s)\n", key.c_str(), word.c_str(), out_key, out_word);
@@ -296,37 +310,38 @@ class HybridHashTableTest : public HashTableTestBase {
     }
 
     void find_all(DataMap& test_data, bool check_data) override {
-        uint out_batch_index = 0;
-        HybridHashEntryBatch* out_batch = in_batches[out_batch_index];
+        uint find_batch_index = 0;
+        HybridFindBatchInput* find_batch_input = find_input_batches[find_batch_index];
+        HybridFindBatchOutput* find_batch_output = find_output_batches[find_batch_index];
 
         uint batch_index = 0;
         for (auto& entry : test_data) {
             const std::string& key = entry.first;
-            std::memcpy(&out_batch->keys[batch_index], key.c_str(), key.size());
-            std::memset(&out_batch->words[batch_index], 0, WORD_SIZE);
+            std::memcpy(&find_batch_input->keys[batch_index], key.c_str(), key.size());
             batch_index++;
 
             // Insert entries using max BATCH_SIZE
             if (batch_index == BATCH_SIZE) {
-                h->find_batch(out_batch, BATCH_SIZE);
+                h->find_batch(find_batch_input, find_batch_output, BATCH_SIZE);
 
                 if (check_data) {
                     cudaCheckErrors();
-                    compare_data(test_data, out_batch, BATCH_SIZE);
+                    compare_data(test_data, find_batch_input, find_batch_output, BATCH_SIZE);
                 }
                 batch_index = 0;
 
-                out_batch_index++;
-                out_batch = in_batches[out_batch_index];
+                find_batch_index++;
+                find_batch_input = find_input_batches[find_batch_index];
+                find_batch_output = find_output_batches[find_batch_index];
             }
         }
         // Check remaining entries
         if (batch_index > 0 && batch_index < BATCH_SIZE) {
-            h->find_batch(out_batch, batch_index);
+            h->find_batch(find_batch_input, find_batch_output, batch_index);
 
             if (check_data) {
                 cudaCheckErrors();
-                compare_data(test_data, out_batch, batch_index);
+                compare_data(test_data, find_batch_input, find_batch_output, batch_index);
             }
         }
     }
@@ -345,37 +360,38 @@ class HybridHashTableTest : public HashTableTestBase {
 
                 // There should be 1 out_batch per request that will be made
                 // Figure out which batches this thread is using
-                uint out_batch_index = (NUM_BATCHES / NUM_THREADS) * index;
-                HybridHashEntryBatch* out_batch = out_batches[out_batch_index];
+                uint find_batch_index = (NUM_BATCHES / NUM_THREADS) * index;
+                HybridFindBatchInput* find_batch_input = find_input_batches[find_batch_index];
+                HybridFindBatchOutput* find_batch_output = find_output_batches[find_batch_index];
 
                 uint batch_index = 0;
                 for (uint i = start_index; i < end_index; i++) {
                     const std::string& key = data_copy[i].key;
-                    std::memcpy(&out_batch->keys[batch_index], key.c_str(), key.size());
-                    std::memset(&out_batch->words[batch_index], 0, WORD_SIZE);
+                    std::memcpy(&find_batch_input->keys[batch_index], key.c_str(), key.size());
                     batch_index++;
 
                     // Insert entries using max BATCH_SIZE
                     if (batch_index == BATCH_SIZE) {
-                        h->find_batch(out_batch, BATCH_SIZE);
+                        h->find_batch(find_batch_input, find_batch_output, BATCH_SIZE);
 
                         if (check_data) {
                             cudaCheckErrors();
-                            compare_data(test_data, out_batch, BATCH_SIZE);
+                            compare_data(test_data, find_batch_input, find_batch_output, BATCH_SIZE);
                         }
                         batch_index = 0;
 
-                        out_batch_index++;
-                        out_batch = out_batches[out_batch_index];
+                        find_batch_index++;
+                        find_batch_input = find_input_batches[find_batch_index];
+                        find_batch_output = find_output_batches[find_batch_index];
                     }
                 }
                 // Insert remaining entries
                 if (batch_index > 0 && batch_index < BATCH_SIZE) {
-                    h->find_batch(out_batch, batch_index);
+                    h->find_batch(find_batch_input, find_batch_output, batch_index);
 
                     if (check_data) {
                         cudaCheckErrors();
-                        compare_data(test_data, out_batch, batch_index);
+                        compare_data(test_data, find_batch_input, find_batch_output, batch_index);
                     }
                 }
             });
@@ -390,8 +406,9 @@ class HybridHashTableTest : public HashTableTestBase {
     static constexpr uint NUM_BATCHES = (NUM_TEST_ENTRIES / BATCH_SIZE) + (NUM_TEST_ENTRIES % BATCH_SIZE != 0 ? 1 : 0);
 
     HybridHashTable* h;
-    HybridHashEntryBatch* in_batches[NUM_BATCHES];
-    HybridHashEntryBatch* out_batches[NUM_BATCHES];
+    HybridInsertBatch* insert_batches[NUM_BATCHES];
+    HybridFindBatchInput* find_input_batches[NUM_BATCHES];
+    HybridFindBatchOutput* find_output_batches[NUM_BATCHES];
 };
 
 std::string get_random_string(UniformDistribution& char_picker, Generator& generator, uint used_space, uint length) {

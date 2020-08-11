@@ -115,13 +115,13 @@ __global__ void gpu_init(GpuHashTable* hash_table) {
     }
 }
 
-__global__ void gpu_insert_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries) {
+__global__ void gpu_insert_batch(GpuHashTable* hash_table, HybridInsertBatch* insert_batch, uint num_entries) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
     for (uint32_t i = index; i < num_entries; i += stride) {
-        char* key = entry_batch->keys[i];
-        char* word = entry_batch->words[i];
-        uint32_t location = entry_batch->locations[i];
+        char* key = insert_batch->keys[i];
+        char* word = insert_batch->words[i];
+        uint32_t location = insert_batch->locations[i];
 
         hash_table->entries[location].occupied = true;
         std::memcpy(&hash_table->entries[location].key, key, KEY_SIZE);
@@ -129,18 +129,20 @@ __global__ void gpu_insert_batch(GpuHashTable* hash_table, HybridHashEntryBatch*
     }
 }
 
-__global__ void gpu_find_batch(GpuHashTable* hash_table, HybridHashEntryBatch* entry_batch, uint num_entries) {
+__global__ void gpu_find_batch(GpuHashTable* hash_table, HybridFindBatchInput* input_find_batch,
+                               HybridFindBatchOutput* output_find_batch, uint num_entries) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
     for (uint32_t i = index; i < num_entries; i += stride) {
         // find location (location) that memory is stored
-        char* key = entry_batch->keys[i];
+        char* key = input_find_batch->keys[i];
         uint32_t location = hash_function(key);
         HashEntryInternal* entry = &hash_table->entries[location];
         while (entry->occupied) {
             // IF a match is found, copy the word and move onto next batch entry
             if (device_memcmp(key, entry->key, KEY_SIZE) == true) {
-                std::memcpy(&entry_batch->words[i], &entry->word, WORD_SIZE);
+                std::memcpy(&output_find_batch->words[i], &entry->word, WORD_SIZE);
+                output_find_batch->entry_found[i] = true;
                 break;
             }
             location = (location + 1) % NUM_ELEMENTS;
@@ -162,9 +164,11 @@ HybridHashTable::HybridHashTable() : stream_count{0} {
     cudaDeviceSynchronize();
     cudaCheckErrors();
 
+    cudaMalloc(&insert_buf, sizeof(HybridInsertBatch));
     for (uint i = 0; i < MAX_STREAMS; i++) {
         cudaStreamCreate(&streams[i]);
-        cudaMalloc(&batch_bufs[i], sizeof(HybridHashEntryBatch));
+        cudaMalloc(&input_find_bufs[i], sizeof(HybridFindBatchInput));
+        cudaMalloc(&output_find_bufs[i], sizeof(HybridFindBatchOutput));
     }
 }
 
@@ -193,29 +197,30 @@ uint32_t HybridHashTable::find_location(char key[KEY_SIZE]) {
     return hash_val;
 }
 
-void HybridHashTable::insert_batch(HybridHashEntryBatch* entry_batch, uint num_entries) {
+void HybridHashTable::insert_batch(HybridInsertBatch* insert_batch, uint num_entries) {
     // iterate through entries, find the key location, and populate the internal_batch with the locations
     time_t t0 = get_time_us();
     for (uint i = 0; i < num_entries; i++) {
-        uint32_t location = find_location(entry_batch->keys[i]);
-        entry_batch->locations[i] = location;
+        uint32_t location = find_location(insert_batch->keys[i]);
+        insert_batch->locations[i] = location;
 
         // Set key storage to occupied and copy key
         key_storage[location].occupied = true;
-        std::memcpy(key_storage[location].key, entry_batch->keys[i], KEY_SIZE);
+        std::memcpy(key_storage[location].key, insert_batch->keys[i], KEY_SIZE);
     }
     // printf("insert_batch - %lu us to find locations\n", get_time_us() - t0);
 
-    // TODO change this to transfer only words
-    cudaMemcpyAsync(batch_bufs[stream_count], entry_batch, sizeof(HybridHashEntryBatch), cudaMemcpyHostToDevice,
-                    streams[stream_count]);
-    gpu_insert_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE, 0, streams[stream_count]>>>(word_storage, batch_bufs[stream_count],
-                                                                                 num_entries);
-
-    stream_count = (stream_count + 1) % MAX_STREAMS;
+    // MemcpyAsync on default stream so that we don't block on this call
+    cudaMemcpyAsync(insert_buf, insert_batch, sizeof(HybridInsertBatch), cudaMemcpyHostToDevice, DEFAULT_STREAM);
+    gpu_insert_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE>>>(word_storage, insert_buf, num_entries);
 }
 
-void HybridHashTable::find_batch(HybridHashEntryBatch* entry_batch, uint num_entries) {
+void HybridHashTable::sync_inserts() {
+    cudaStreamSynchronize(DEFAULT_STREAM);
+}
+
+void HybridHashTable::find_batch(HybridFindBatchInput* input_find_batch, HybridFindBatchOutput* output_find_batch,
+                                 uint num_entries) {
     uint stream = 0;
 
     {
@@ -223,12 +228,12 @@ void HybridHashTable::find_batch(HybridHashEntryBatch* entry_batch, uint num_ent
         stream = stream_count;
         stream_count = (stream_count + 1) % MAX_STREAMS;
 
-        cudaMemcpyAsync(batch_bufs[stream], entry_batch, sizeof(HybridHashEntryBatch), cudaMemcpyHostToDevice,
+        cudaMemcpyAsync(input_find_bufs[stream], input_find_batch, sizeof(HybridFindBatchInput), cudaMemcpyHostToDevice,
                         streams[stream]);
-        gpu_find_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE, 0, streams[stream]>>>(word_storage, batch_bufs[stream],
-                                                                             num_entries);
-        cudaMemcpyAsync(entry_batch, batch_bufs[stream], sizeof(HybridHashEntryBatch), cudaMemcpyDeviceToHost,
-                        streams[stream]);
+        gpu_find_batch<<<NUM_BLOCKS_BATCH, BLOCK_SIZE, 0, streams[stream]>>>(word_storage, input_find_bufs[stream],
+                                                                             output_find_bufs[stream], num_entries);
+        cudaMemcpyAsync(output_find_batch, output_find_bufs[stream], sizeof(HybridFindBatchOutput),
+                        cudaMemcpyDeviceToHost, streams[stream]);
     }
 
     cudaStreamSynchronize(streams[stream]);
@@ -241,7 +246,6 @@ void HybridHashTable::clear() {
     cudaDeviceSynchronize();
 }
 
-// TODO this can be optimized
 __global__ void debug_print_entries_internal(GpuHashTable* hash_table) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;

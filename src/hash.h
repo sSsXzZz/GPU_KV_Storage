@@ -128,15 +128,35 @@ class GpuHashTable : public CudaMemory {
 // Hybrid Hash Table
 // ----------------------------------------------
 
-struct HybridHashEntryBatch : CudaManagedMemory {
-    HybridHashEntryBatch() {
+struct HybridInsertBatch {
+    HybridInsertBatch() {
         memset(&keys, 0, BATCH_SIZE * KEY_SIZE);
         memset(&locations, 0, BATCH_SIZE);
-        memset(&words, 0, BATCH_SIZE & WORD_SIZE);
+        memset(&words, 0, BATCH_SIZE * WORD_SIZE);
     }
 
     char keys[BATCH_SIZE][KEY_SIZE];
     uint32_t locations[BATCH_SIZE];
+    char words[BATCH_SIZE][WORD_SIZE];
+};
+
+struct HybridFindBatchInput {
+    HybridFindBatchInput() {
+        memset(&keys, 0, BATCH_SIZE * KEY_SIZE);
+    }
+
+    char keys[BATCH_SIZE][KEY_SIZE];
+};
+
+struct HybridFindBatchOutput {
+    HybridFindBatchOutput() {
+        for (uint i = 0; i < BATCH_SIZE; i++) {
+            entry_found[i] = false;
+        }
+        memset(&words, 0, sizeof(HybridFindBatchOutput));
+    }
+
+    bool entry_found[BATCH_SIZE];
     char words[BATCH_SIZE][WORD_SIZE];
 };
 
@@ -149,10 +169,11 @@ class HybridHashTable {
   public:
     HybridHashTable();
 
-    void insert_batch(HybridHashEntryBatch* entry_batch, uint num_entries);
+    void insert_batch(HybridInsertBatch* insert_batch, uint num_entries);
 
-    void find_batch(HybridHashEntryBatch* entry_batch, uint num_entries);
+    void sync_inserts();
 
+    void find_batch(HybridFindBatchInput* input_find_batch, HybridFindBatchOutput* output_find_batch, uint num_entries);
     // Clears all entries from hash table
     void clear();
 
@@ -164,8 +185,11 @@ class HybridHashTable {
     GpuHashTable* word_storage;
 
     static constexpr uint MAX_STREAMS = 10;
+    static constexpr cudaStream_t DEFAULT_STREAM = 0;
     // A buffer will be needed for every stream
-    HybridHashEntryBatch* batch_bufs[MAX_STREAMS];
+    HybridInsertBatch* insert_buf;
+    HybridFindBatchInput* input_find_bufs[MAX_STREAMS];
+    HybridFindBatchOutput* output_find_bufs[MAX_STREAMS];
     cudaStream_t streams[MAX_STREAMS];
     uint stream_count;
     std::mutex find_lock;
