@@ -20,9 +20,10 @@ using Generator = std::mt19937;
 using DataMap = std::unordered_map<std::string, std::string>;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-static constexpr uint NUM_TEST_ENTRIES = 1 << 20; // ~1M entries
+static constexpr uint NUM_TEST_ENTRIES = 1 << 20;  // ~1M entries
 static constexpr uint NUM_TEST_TIMES = 100;
 static constexpr uint NUM_THREADS = 10;
+static constexpr bool USE_MULTITHREADED = false;
 static constexpr bool CHECK_DATA = false;
 
 struct KVPair {
@@ -45,6 +46,8 @@ class HashTableTestBase {
     // Finds every entry in the given DataMap
     virtual void find_all(DataMap& test_data, bool check_data) = 0;
 
+    virtual void find_all_mt(DataMap& test_data, bool check_data) = 0;
+
     // Clears all entries in hash table
     virtual void clear() = 0;
 
@@ -56,7 +59,11 @@ class HashTableTestBase {
         std::cout << name_ << " Insert time: " << t1_insert - t0_insert << " us" << std::endl;
 
         time_t t0_find = get_time_us();
-        find_all(test_data, check_data);
+        if (USE_MULTITHREADED) {
+            find_all_mt(test_data, check_data);
+        } else {
+            find_all(test_data, check_data);
+        }
         time_t t1_find = get_time_us();
         find_all_times.emplace_back(t1_find - t0_find);
         std::cout << name_ << " Find time: " << t1_find - t0_find << " us" << std::endl;
@@ -135,9 +142,6 @@ class CpuHashTableTest : public HashTableTestBase {
     }
 
     void find_all(DataMap& test_data, bool check_data) override {
-        find_all_mt(test_data, check_data);
-        return;
-
         CpuHashEntry* out_entry = out_entries[0];
 
         for (auto& entry : test_data) {
@@ -153,7 +157,7 @@ class CpuHashTableTest : public HashTableTestBase {
         }
     }
 
-    void find_all_mt(DataMap& test_data, bool check_data) {
+    void find_all_mt(DataMap& test_data, bool check_data) override {
         std::vector<std::thread> threads;
         for (uint i = 0; i < NUM_THREADS; i++) {
             threads.emplace_back([&, index = i]() {
@@ -292,9 +296,6 @@ class HybridHashTableTest : public HashTableTestBase {
     }
 
     void find_all(DataMap& test_data, bool check_data) override {
-        find_all_mt(test_data, check_data);
-        return;
-
         uint out_batch_index = 0;
         HybridHashEntryBatch* out_batch = in_batches[out_batch_index];
 
@@ -333,7 +334,7 @@ class HybridHashTableTest : public HashTableTestBase {
     /*
         TODO: cleanup the data_copy thing
      */
-    void find_all_mt(DataMap& test_data, bool check_data) {
+    void find_all_mt(DataMap& test_data, bool check_data) override {
         static_assert(NUM_BATCHES >= NUM_THREADS, "More batches than threads means indexing logic won't work");
         std::vector<std::thread> threads;
         for (uint i = 0; i < NUM_THREADS; i++) {
