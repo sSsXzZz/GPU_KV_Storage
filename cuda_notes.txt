@@ -1,16 +1,40 @@
-Design Notes
-* [CONFIRM] Some difference can be observed by making sure (1 + KEY_SIZE + WORD_SIZE == 16 OR 32)
-* [CONFIRM] Using async memcpy & streams
-
-* Speed after co-location optimization
+* Before adding keys/metadata to GPU memory
 ---------------------------------------------------
-Hybrid Avg Insert time: 295908 us
-Hybrid Avg Find time: 112751 us
+Hybrid Avg Insert time: 273452 us
+Hybrid Avg Find time: 293848 us
 Hybrid Tested 100 times
-
-* Speedup from switching to pinned memory below
 ---------------------------------------------------
-Hybrid Avg Insert time: 217784 us
-Hybrid Avg Find time: 90876 us
+CPU Avg Insert time: 193549 us
+CPU Avg Find time: 205440 us
+CPU Tested 100 times
+
+* After adding keys/metadata to GPU memory
+---------------------------------------------------
+Hybrid Avg Insert time: 320429 us
+Hybrid Avg Find time: 136488 us
 Hybrid Tested 100 times
+---------------------------------------------------
+CPU Avg Insert time: 193713 us
+CPU Avg Find time: 205018 us
+CPU Tested 100 times
+
+* After moving to pinned memory (from Unified memory)
+---------------------------------------------------
+Hybrid Avg Insert time: 272080 us
+Hybrid Avg Find time: 117159 us
+Hybrid Tested 100 times
+---------------------------------------------------
+CPU Avg Insert time: 189897 us
+CPU Avg Find time: 209250 us
+CPU Tested 100 times
+
+* After using key size of 15 (total entry size == 32 bytes)
+---------------------------------------------------
+Hybrid Avg Insert time: 261863 us
+Hybrid Avg Find time: 104596 us
+Hybrid Tested 100 times
+---------------------------------------------------
+CPU Avg Insert time: 195109 us
+CPU Avg Find time: 189431 us
+CPU Tested 100 times
 
