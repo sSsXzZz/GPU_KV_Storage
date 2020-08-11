@@ -38,3 +38,23 @@ CPU Avg Insert time: 195109 us
 CPU Avg Find time: 189431 us
 CPU Tested 100 times
 
+* Creating a separate structure for batch find input & output
+---------------------------------------------------
+Hybrid Avg Insert time: 258481 us
+Hybrid Avg Find time: 99033 us
+Hybrid Tested 100 times
+---------------------------------------------------
+CPU Avg Insert time: 196984 us
+CPU Avg Find time: 191229 us
+CPU Tested 100 times
+
+* Multi-threaded reads
+---------------------------------------------------
+Hybrid Avg Insert time: 257783 us
+Hybrid Avg Find time: 9733 us
+Hybrid Tested 100 times
+---------------------------------------------------
+CPU Avg Insert time: 198473 us
+CPU Avg Find time: 30655 us
+CPU Tested 100 times
+
