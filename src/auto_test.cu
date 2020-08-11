@@ -20,7 +20,7 @@ using Generator = std::mt19937;
 using DataMap = std::unordered_map<std::string, std::string>;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-static constexpr uint NUM_TEST_ENTRIES = 1000000;
+static constexpr uint NUM_TEST_ENTRIES = 1 << 20; // ~1M entries
 static constexpr uint NUM_TEST_TIMES = 100;
 static constexpr uint NUM_THREADS = 10;
 static constexpr bool CHECK_DATA = false;
