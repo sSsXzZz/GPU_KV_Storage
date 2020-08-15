@@ -1,6 +1,10 @@
 *** Non-multithreaded data ***
 
 ---------------------------------------------------
+CPU Insert Avg,StdDev (us): 196708,843
+CPU Find Avg,StdDev (us): 191151,771
+
+---------------------------------------------------
 Hybrid Insert Avg,StdDev (us): 248164,1110
 Hybrid Find Avg,StdDev (us): 85280,330
 Batch size: 1048576 (1 << 20)
@@ -88,6 +92,10 @@ Batch size: 16 (1 << 4)
 ** Multi-threaded data ** 
 
 ---------------------------------------------------
+CPU Insert Avg,StdDev (us): 197262,1660
+CPU Find Avg,StdDev (us): 33780,1174
+
+---------------------------------------------------
 Hybrid Insert Avg,StdDev (us): 266111,1331
 Hybrid Find Avg,StdDev (us): 10247,251
 Batch size: 32768 (1 << 15)
@@ -145,4 +153,3 @@ Batch size: 32 (1 << 5)
 Hybrid Insert Avg,StdDev (us): 1067038,6515
 Hybrid Find Avg,StdDev (us): 976635,4138
 Batch size: 16 (1 << 4)
-
