@@ -1,0 +1,148 @@
+*** Non-multithreaded data ***
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 248164,1110
+Hybrid Find Avg,StdDev (us): 85280,330
+Batch size: 1048576 (1 << 20)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 248056,759
+Hybrid Find Avg,StdDev (us): 83857,428
+Batch size: 524288 (1 << 19)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 261747,1432
+Hybrid Find Avg,StdDev (us): 86512,658
+Batch size: 262144 (1 << 18)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 260702,748
+Hybrid Find Avg,StdDev (us): 86851,551
+Batch size: 131072 (1 << 17)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 264214,1039
+Hybrid Find Avg,StdDev (us): 91192,535
+Batch size: 65536 (1 << 16)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 264801,767
+Hybrid Find Avg,StdDev (us): 97192,527
+Batch size: 32768 (1 << 15)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 263328,711
+Hybrid Find Avg,StdDev (us): 93070,828
+Batch size: 16384 (1 << 14)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 267485,883
+Hybrid Find Avg,StdDev (us): 104555,567
+Batch size: 8192 (1 << 13)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 265291,745
+Hybrid Find Avg,StdDev (us): 123101,581
+Batch size: 4096 (1 << 12)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 269960,602
+Hybrid Find Avg,StdDev (us): 157807,3668
+Batch size: 2048 (1 << 11)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 275383,1573
+Hybrid Find Avg,StdDev (us): 227167,2906
+Batch size: 1024 (1 << 10)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 277666,1334
+Hybrid Find Avg,StdDev (us): 363072,2931
+Batch size: 512 (1 << 9)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 288596,620
+Hybrid Find Avg,StdDev (us): 620836,3182
+Batch size: 256 (1 << 8)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 298253,1580
+Hybrid Find Avg,StdDev (us): 1029665,5092
+Batch size: 128 (1 << 7)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 323135,1036
+Hybrid Find Avg,StdDev (us): 1808951,7002
+Batch size: 64 (1 << 6)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 522986,6106
+Hybrid Find Avg,StdDev (us): 3186905,6538
+Batch size: 32 (1 << 5)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 1009765,6576
+Hybrid Find Avg,StdDev (us): 5339898,13312
+Batch size: 16 (1 << 4)
+
+** Multi-threaded data ** 
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 266111,1331
+Hybrid Find Avg,StdDev (us): 10247,251
+Batch size: 32768 (1 << 15)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 265685,1822
+Hybrid Find Avg,StdDev (us): 9579,117
+Batch size: 16384 (1 << 14)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 264996,1457
+Hybrid Find Avg,StdDev (us): 9948,192
+Batch size: 8192 (1 << 13)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 268395,1574
+Hybrid Find Avg,StdDev (us): 13392,233
+Batch size: 4096 (1 << 12)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 270055,1577
+Hybrid Find Avg,StdDev (us): 20227,368
+Batch size: 2048 (1 << 11)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 268995,24249
+Hybrid Find Avg,StdDev (us): 35199,831
+Batch size: 1024 (1 << 10)
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 267116,1437
+Hybrid Find Avg,StdDev (us): 54915,2486
+Batch size: 512 (1 << 9)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 274035,2425
+Hybrid Find Avg,StdDev (us): 99318,1785
+Batch size: 256 (1 << 8)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 290650,2082
+Hybrid Find Avg,StdDev (us): 173205,1580
+Batch size: 128 (1 << 7)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 313288,1812
+Hybrid Find Avg,StdDev (us): 309519,1832
+Batch size: 64 (1 << 6)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 550223,5220
+Hybrid Find Avg,StdDev (us): 560952,3162
+Batch size: 32 (1 << 5)
+
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 1067038,6515
+Hybrid Find Avg,StdDev (us): 976635,4138
+Batch size: 16 (1 << 4)
+
