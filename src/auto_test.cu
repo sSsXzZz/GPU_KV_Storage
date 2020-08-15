@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cmath>
 #include <ctime>
 #include <random>
 #include <thread>
@@ -80,6 +81,34 @@ class HashTableTestBase {
         std::cout << name_ << " Avg Insert time: " << insert_all_avg << " us" << std::endl;
         std::cout << name_ << " Avg Find time: " << find_all_avg << " us" << std::endl;
         std::cout << name_ << " Tested " << insert_all_times.size() << " times" << std::endl;
+    }
+
+    // Prints averages and standard deviations
+    void print_stats() {
+        time_t insert_all_avg =
+            std::accumulate(insert_all_times.begin(), insert_all_times.end(), 0) / insert_all_times.size();
+        time_t find_all_avg = std::accumulate(find_all_times.begin(), find_all_times.end(), 0) / find_all_times.size();
+
+        time_t insert_variance = 0;
+        time_t find_variance = 0;
+
+        for (time_t &insert_time : insert_all_times) {
+            insert_variance += std::pow(insert_time - insert_all_avg, 2);
+        }
+        insert_variance /= (insert_all_times.size() - 1);
+
+        for (time_t &find_time : find_all_times) {
+            find_variance += std::pow(find_time - find_all_avg, 2);
+        }
+        find_variance /= (find_all_times.size() - 1);
+
+        time_t insert_std_dev = std::sqrt(insert_variance);
+        time_t find_std_dev = std::sqrt(find_variance);
+
+        std::cout << "---------------------------------------------------\n";
+        std::cout << name_ << " Insert Avg,StdDev (us): " << insert_all_avg << "," << insert_std_dev << std::endl;
+        std::cout << name_ << " Find Avg,StdDev (us): " << find_all_avg << "," << find_std_dev << std::endl;
+
     }
 
   protected:
@@ -460,8 +489,9 @@ int main(void) {
         hybrid_tester.clear();
         cpu_tester.clear();
     }
-    hybrid_tester.print_averages();
-    cpu_tester.print_averages();
+    hybrid_tester.print_stats();
+    //cpu_tester.print_stats();
+    std::cout << "Batch size: " << BATCH_SIZE << std::endl;
 
     return 0;
 }
