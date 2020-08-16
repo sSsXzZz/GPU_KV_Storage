@@ -23,11 +23,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 1329553,29669
-Hybrid Find Avg,StdDev (us): 5776055,14779
+Hybrid Insert Avg,StdDev (us): 368575,3379
+Hybrid Find Avg,StdDev (us): 661131,6608
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 121827,891
-CPU Find Avg,StdDev (us): 72838,393
+CPU Insert Avg,StdDev (us): 121187,1317
+CPU Find Avg,StdDev (us): 13326,294
 Batch size: 16
 --------------------------------------------
 Power 5
@@ -54,11 +54,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 740614,2218
-Hybrid Find Avg,StdDev (us): 3439751,5931
+Hybrid Insert Avg,StdDev (us): 294889,3287
+Hybrid Find Avg,StdDev (us): 347642,3807
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 122081,801
-CPU Find Avg,StdDev (us): 72864,536
+CPU Insert Avg,StdDev (us): 121537,1269
+CPU Find Avg,StdDev (us): 12544,416
 Batch size: 32
 --------------------------------------------
 Power 6
@@ -85,11 +85,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 316857,10622
-Hybrid Find Avg,StdDev (us): 1950643,3769
+Hybrid Insert Avg,StdDev (us): 250585,1713
+Hybrid Find Avg,StdDev (us): 177831,2466
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 120815,484
-CPU Find Avg,StdDev (us): 71999,287
+CPU Insert Avg,StdDev (us): 121803,1397
+CPU Find Avg,StdDev (us): 13179,281
 Batch size: 64
 --------------------------------------------
 Power 7
@@ -116,11 +116,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 229277,1086
-Hybrid Find Avg,StdDev (us): 1082898,2608
+Hybrid Insert Avg,StdDev (us): 228862,1614
+Hybrid Find Avg,StdDev (us): 92751,1786
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 95883,330
-CPU Find Avg,StdDev (us): 71794,348
+CPU Insert Avg,StdDev (us): 122491,1168
+CPU Find Avg,StdDev (us): 13170,167
 Batch size: 128
 --------------------------------------------
 Power 8
@@ -147,11 +147,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 216480,650
-Hybrid Find Avg,StdDev (us): 639615,1604
+Hybrid Insert Avg,StdDev (us): 216208,1616
+Hybrid Find Avg,StdDev (us): 52398,1805
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 120217,734
-CPU Find Avg,StdDev (us): 72082,309
+CPU Insert Avg,StdDev (us): 122931,1148
+CPU Find Avg,StdDev (us): 13166,398
 Batch size: 256
 --------------------------------------------
 Power 9
@@ -178,11 +178,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 210070,2629
-Hybrid Find Avg,StdDev (us): 365797,2061
+Hybrid Insert Avg,StdDev (us): 210368,2871
+Hybrid Find Avg,StdDev (us): 32688,2710
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 120149,476
-CPU Find Avg,StdDev (us): 72187,434
+CPU Insert Avg,StdDev (us): 123478,1111
+CPU Find Avg,StdDev (us): 13146,628
 Batch size: 512
 --------------------------------------------
 Power 10
@@ -209,11 +209,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 208391,623
-Hybrid Find Avg,StdDev (us): 221558,2332
+Hybrid Insert Avg,StdDev (us): 205976,1569
+Hybrid Find Avg,StdDev (us): 22900,2633
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 123836,478
-CPU Find Avg,StdDev (us): 73380,301
+CPU Insert Avg,StdDev (us): 123316,1426
+CPU Find Avg,StdDev (us): 13093,229
 Batch size: 1024
 --------------------------------------------
 Power 11
@@ -240,11 +240,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 203862,766
-Hybrid Find Avg,StdDev (us): 144809,2058
+Hybrid Insert Avg,StdDev (us): 201369,1983
+Hybrid Find Avg,StdDev (us): 16166,1394
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 122007,865
-CPU Find Avg,StdDev (us): 74477,556
+CPU Insert Avg,StdDev (us): 123288,1304
+CPU Find Avg,StdDev (us): 13020,241
 Batch size: 2048
 --------------------------------------------
 Power 12
@@ -271,11 +271,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 198216,613
-Hybrid Find Avg,StdDev (us): 108635,395
+Hybrid Insert Avg,StdDev (us): 197945,1844
+Hybrid Find Avg,StdDev (us): 6596,631
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 120259,444
-CPU Find Avg,StdDev (us): 75131,425
+CPU Insert Avg,StdDev (us): 122993,1407
+CPU Find Avg,StdDev (us): 13156,206
 Batch size: 4096
 --------------------------------------------
 Power 13
@@ -302,11 +302,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 199911,1053
-Hybrid Find Avg,StdDev (us): 88785,373
+Hybrid Insert Avg,StdDev (us): 195709,1263
+Hybrid Find Avg,StdDev (us): 5424,169
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 121421,547
-CPU Find Avg,StdDev (us): 72752,311
+CPU Insert Avg,StdDev (us): 120663,1242
+CPU Find Avg,StdDev (us): 12972,267
 Batch size: 8192
 --------------------------------------------
 Power 14
@@ -333,11 +333,11 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 195235,1071
-Hybrid Find Avg,StdDev (us): 77177,302
+Hybrid Insert Avg,StdDev (us): 195571,1304
+Hybrid Find Avg,StdDev (us): 4750,163
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 120372,576
-CPU Find Avg,StdDev (us): 71904,311
+CPU Insert Avg,StdDev (us): 120611,1034
+CPU Find Avg,StdDev (us): 13164,169
 Batch size: 16384
 --------------------------------------------
 Power 15
@@ -364,156 +364,9 @@ Scanning dependencies of target hash
 [100%] Linking CUDA executable hash
 [100%] Built target hash
 ---------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 198186,1395
-Hybrid Find Avg,StdDev (us): 80914,309
+Hybrid Insert Avg,StdDev (us): 195041,1450
+Hybrid Find Avg,StdDev (us): 5091,99
 ---------------------------------------------------
-CPU Insert Avg,StdDev (us): 120952,517
-CPU Find Avg,StdDev (us): 75653,375
+CPU Insert Avg,StdDev (us): 120137,941
+CPU Find Avg,StdDev (us): 13105,179
 Batch size: 32768
---------------------------------------------
-Power 16
--- The CXX compiler identification is GNU 7.5.0
--- The CUDA compiler identification is NVIDIA 10.2.89
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
--- Detecting CUDA compiler ABI info
--- Detecting CUDA compiler ABI info - done
--- Configuring done
--- Generating done
--- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
-Scanning dependencies of target hash
-[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
-[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
-[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
-[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
-[100%] Linking CUDA executable hash
-[100%] Built target hash
----------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 195468,1056
-Hybrid Find Avg,StdDev (us): 74224,276
----------------------------------------------------
-CPU Insert Avg,StdDev (us): 120067,652
-CPU Find Avg,StdDev (us): 72616,310
-Batch size: 65536
---------------------------------------------
-Power 17
--- The CXX compiler identification is GNU 7.5.0
--- The CUDA compiler identification is NVIDIA 10.2.89
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
--- Detecting CUDA compiler ABI info
--- Detecting CUDA compiler ABI info - done
--- Configuring done
--- Generating done
--- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
-Scanning dependencies of target hash
-[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
-CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
-CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
-Makefile:83: recipe for target 'all' failed
----------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 196010,1300
-Hybrid Find Avg,StdDev (us): 74427,288
----------------------------------------------------
-CPU Insert Avg,StdDev (us): 120049,493
-CPU Find Avg,StdDev (us): 71890,263
-Batch size: 65536
---------------------------------------------
-Power 18
--- The CXX compiler identification is GNU 7.5.0
--- The CUDA compiler identification is NVIDIA 10.2.89
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
--- Detecting CUDA compiler ABI info
--- Detecting CUDA compiler ABI info - done
--- Configuring done
--- Generating done
--- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
-Scanning dependencies of target hash
-[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
-CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
-CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
-Makefile:83: recipe for target 'all' failed
----------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 197859,989
-Hybrid Find Avg,StdDev (us): 75013,442
----------------------------------------------------
-CPU Insert Avg,StdDev (us): 120852,720
-CPU Find Avg,StdDev (us): 75942,899
-Batch size: 65536
---------------------------------------------
-Power 19
--- The CXX compiler identification is GNU 7.5.0
--- The CUDA compiler identification is NVIDIA 10.2.89
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
--- Detecting CUDA compiler ABI info
--- Detecting CUDA compiler ABI info - done
--- Configuring done
--- Generating done
--- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
-Scanning dependencies of target hash
-[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
-CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
-CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
-Makefile:83: recipe for target 'all' failed
----------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 197414,1430
-Hybrid Find Avg,StdDev (us): 75089,319
----------------------------------------------------
-CPU Insert Avg,StdDev (us): 120867,462
-CPU Find Avg,StdDev (us): 72817,477
-Batch size: 65536
---------------------------------------------
-Power 20
--- The CXX compiler identification is GNU 7.5.0
--- The CUDA compiler identification is NVIDIA 10.2.89
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
--- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
--- Detecting CUDA compiler ABI info
--- Detecting CUDA compiler ABI info - done
--- Configuring done
--- Generating done
--- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
-Scanning dependencies of target hash
-[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
-CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
-CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
-Makefile:83: recipe for target 'all' failed
----------------------------------------------------
-Hybrid Insert Avg,StdDev (us): 198317,730
-Hybrid Find Avg,StdDev (us): 75561,280
----------------------------------------------------
-CPU Insert Avg,StdDev (us): 121824,404
-CPU Find Avg,StdDev (us): 76728,368
-Batch size: 65536

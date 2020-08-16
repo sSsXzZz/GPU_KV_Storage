@@ -5,10 +5,10 @@ import numpy as np
 
 def plot_variable_batch():
     # CPU does not batch data, so generate horizontal lines with these values
-    CPU_FIND_AVG = 191151
-    CPU_FIND_STDDEV = 771
-    CPU_MT_FIND_AVG = 33780
-    CPU_MT_FIND_STDDEV = 1174
+    CPU_FIND_AVG = 71997
+    CPU_FIND_STDDEV = 628
+    CPU_MT_FIND_AVG = 13105
+    CPU_MT_FIND_STDDEV = 179
 
     batch_data = np.genfromtxt('./batch.csv', delimiter=',', names=True, skip_header=1)
     batch_data_mt = np.genfromtxt('./batch_mt.csv', delimiter=',', names=True, skip_header=1)
@@ -21,7 +21,7 @@ def plot_variable_batch():
     ax_avg_find.plot(batch_data['BatchSize'], batch_data['HybridFindAvg'], '-o', label='Hybrid Single-threaded Find')
     ax_avg_find.plot(batch_data_mt['BatchSize'], batch_data_mt['HybridFindAvg'], '-v', label='Hybrid Multi-threaded Find')
     ax_avg_find.plot(batch_data['BatchSize'], np.repeat(CPU_FIND_AVG, n_batch_data), '--s', label='CPU Single-threaded Find')
-    ax_avg_find.plot(batch_data['BatchSize'], np.repeat(CPU_MT_FIND_AVG, n_batch_data), '--*', label='CPU Single-threaded Find')
+    ax_avg_find.plot(batch_data['BatchSize'], np.repeat(CPU_MT_FIND_AVG, n_batch_data), '--*', label='CPU Multi-threaded Find')
     ax_avg_find.legend()
     ax_avg_find.set(title='Find Average Times', xlabel='Batch Size', ylabel='Find Time (us)')
     ax_avg_find.set_xscale('log', base=2)
@@ -37,7 +37,7 @@ def plot_variable_batch():
     ax_dev_find.plot(batch_data['BatchSize'], batch_data['HybridFindStdDev'], '-o', label='Hybrid Single-threaded Find')
     ax_dev_find.plot(batch_data_mt['BatchSize'], batch_data_mt['HybridFindStdDev'], '-v', label='Hybrid Multi-threaded Find')
     ax_dev_find.plot(batch_data['BatchSize'], np.repeat(CPU_FIND_STDDEV, n_batch_data), '--s', label='CPU Single-threaded Find')
-    ax_dev_find.plot(batch_data['BatchSize'], np.repeat(CPU_MT_FIND_STDDEV, n_batch_data), '--*', label='CPU Single-threaded Find')
+    ax_dev_find.plot(batch_data['BatchSize'], np.repeat(CPU_MT_FIND_STDDEV, n_batch_data), '--*', label='CPU Multi-threaded Find')
     ax_dev_find.legend()
     ax_dev_find.set(title='Find Standard Deviations', xlabel='Batch Size', ylabel='Find Time (us)')
     ax_dev_find.set_xscale('log', base=2)
@@ -48,4 +48,4 @@ def plot_variable_batch():
 
     plt.show()
 
-# plot_variable_batch()
+plot_variable_batch()
