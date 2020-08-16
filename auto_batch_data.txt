@@ -1,0 +1,519 @@
+--------------------------------------------
+Power 4
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 1329553,29669
+Hybrid Find Avg,StdDev (us): 5776055,14779
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 121827,891
+CPU Find Avg,StdDev (us): 72838,393
+Batch size: 16
+--------------------------------------------
+Power 5
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 740614,2218
+Hybrid Find Avg,StdDev (us): 3439751,5931
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 122081,801
+CPU Find Avg,StdDev (us): 72864,536
+Batch size: 32
+--------------------------------------------
+Power 6
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 316857,10622
+Hybrid Find Avg,StdDev (us): 1950643,3769
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120815,484
+CPU Find Avg,StdDev (us): 71999,287
+Batch size: 64
+--------------------------------------------
+Power 7
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 229277,1086
+Hybrid Find Avg,StdDev (us): 1082898,2608
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 95883,330
+CPU Find Avg,StdDev (us): 71794,348
+Batch size: 128
+--------------------------------------------
+Power 8
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 216480,650
+Hybrid Find Avg,StdDev (us): 639615,1604
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120217,734
+CPU Find Avg,StdDev (us): 72082,309
+Batch size: 256
+--------------------------------------------
+Power 9
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 210070,2629
+Hybrid Find Avg,StdDev (us): 365797,2061
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120149,476
+CPU Find Avg,StdDev (us): 72187,434
+Batch size: 512
+--------------------------------------------
+Power 10
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 208391,623
+Hybrid Find Avg,StdDev (us): 221558,2332
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 123836,478
+CPU Find Avg,StdDev (us): 73380,301
+Batch size: 1024
+--------------------------------------------
+Power 11
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 203862,766
+Hybrid Find Avg,StdDev (us): 144809,2058
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 122007,865
+CPU Find Avg,StdDev (us): 74477,556
+Batch size: 2048
+--------------------------------------------
+Power 12
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 198216,613
+Hybrid Find Avg,StdDev (us): 108635,395
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120259,444
+CPU Find Avg,StdDev (us): 75131,425
+Batch size: 4096
+--------------------------------------------
+Power 13
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 199911,1053
+Hybrid Find Avg,StdDev (us): 88785,373
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 121421,547
+CPU Find Avg,StdDev (us): 72752,311
+Batch size: 8192
+--------------------------------------------
+Power 14
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 195235,1071
+Hybrid Find Avg,StdDev (us): 77177,302
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120372,576
+CPU Find Avg,StdDev (us): 71904,311
+Batch size: 16384
+--------------------------------------------
+Power 15
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 198186,1395
+Hybrid Find Avg,StdDev (us): 80914,309
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120952,517
+CPU Find Avg,StdDev (us): 75653,375
+Batch size: 32768
+--------------------------------------------
+Power 16
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 195468,1056
+Hybrid Find Avg,StdDev (us): 74224,276
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120067,652
+CPU Find Avg,StdDev (us): 72616,310
+Batch size: 65536
+--------------------------------------------
+Power 17
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
+CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
+Makefile:83: recipe for target 'all' failed
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 196010,1300
+Hybrid Find Avg,StdDev (us): 74427,288
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120049,493
+CPU Find Avg,StdDev (us): 71890,263
+Batch size: 65536
+--------------------------------------------
+Power 18
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
+CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
+Makefile:83: recipe for target 'all' failed
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 197859,989
+Hybrid Find Avg,StdDev (us): 75013,442
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120852,720
+CPU Find Avg,StdDev (us): 75942,899
+Batch size: 65536
+--------------------------------------------
+Power 19
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
+CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
+Makefile:83: recipe for target 'all' failed
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 197414,1430
+Hybrid Find Avg,StdDev (us): 75089,319
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 120867,462
+CPU Find Avg,StdDev (us): 72817,477
+Batch size: 65536
+--------------------------------------------
+Power 20
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+CMakeFiles/hash.dir/build.make:62: recipe for target 'CMakeFiles/hash.dir/src/auto_test.cu.o' failed
+CMakeFiles/Makefile2:67: recipe for target 'CMakeFiles/hash.dir/all' failed
+Makefile:83: recipe for target 'all' failed
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 198317,730
+Hybrid Find Avg,StdDev (us): 75561,280
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 121824,404
+CPU Find Avg,StdDev (us): 76728,368
+Batch size: 65536
