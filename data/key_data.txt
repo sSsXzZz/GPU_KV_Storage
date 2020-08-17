@@ -1,0 +1,240 @@
+--------------------------------------------
+KEY_SIZE 15
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+CUDA FLAGS: -DKEY_SIZE="15" -O3 -gencode arch=compute_61,code=sm_61
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 196342,2130
+Hybrid Find Avg,StdDev (us): 64320,419
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 119422,514
+CPU Find Avg,StdDev (us): 73258,1488
+Batch size=16384 Key size=15 Word size=16 Hash Entries=2097152 Test Entries=1048576 MULTI-THREADED=0 Num Threads=10 Num test runs=100
+--------------------------------------------
+KEY_SIZE 47
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+CUDA FLAGS: -DKEY_SIZE="47" -O3 -gencode arch=compute_61,code=sm_61
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 248488,904
+Hybrid Find Avg,StdDev (us): 85331,385
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 175674,473
+CPU Find Avg,StdDev (us): 136109,491
+Batch size=16384 Key size=47 Word size=16 Hash Entries=2097152 Test Entries=1048576 MULTI-THREADED=0 Num Threads=10 Num test runs=100
+--------------------------------------------
+KEY_SIZE 111
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+CUDA FLAGS: -DKEY_SIZE="111" -O3 -gencode arch=compute_61,code=sm_61
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 331042,1130
+Hybrid Find Avg,StdDev (us): 146372,1249
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 246906,2187
+CPU Find Avg,StdDev (us): 202123,1181
+Batch size=16384 Key size=111 Word size=16 Hash Entries=2097152 Test Entries=1048576 MULTI-THREADED=0 Num Threads=10 Num test runs=100
+--------------------------------------------
+KEY_SIZE 239
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+CUDA FLAGS: -DKEY_SIZE="239" -O3 -gencode arch=compute_61,code=sm_61
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 496853,1581
+Hybrid Find Avg,StdDev (us): 301187,2690
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 416770,2432
+CPU Find Avg,StdDev (us): 340382,4125
+Batch size=16384 Key size=239 Word size=16 Hash Entries=2097152 Test Entries=1048576 MULTI-THREADED=0 Num Threads=10 Num test runs=100
+--------------------------------------------
+KEY_SIZE 495
+-- The CXX compiler identification is GNU 7.5.0
+-- The CUDA compiler identification is NVIDIA 10.2.89
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc
+-- Check for working CUDA compiler: /usr/local/cuda-10.2/bin/nvcc -- works
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+CUDA FLAGS: -DKEY_SIZE="495" -O3 -gencode arch=compute_61,code=sm_61
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/shalin/Documents/GPU_KV_Storage
+Scanning dependencies of target hash
+[ 20%] Building CUDA object CMakeFiles/hash.dir/src/auto_test.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 40%] Building CUDA object CMakeFiles/hash.dir/src/hash.cu.o
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h(239): warning: result of call is not used
+
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h: In function ‘void print_trace()’:
+/home/shalin/Documents/GPU_KV_Storage/src/hash.h:239:7: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+         system(syscom);
+       ^ ~~~~~~
+[ 60%] Building CUDA object CMakeFiles/hash.dir/src/utils.cu.o
+[ 80%] Linking CUDA device code CMakeFiles/hash.dir/cmake_device_link.o
+[100%] Linking CUDA executable hash
+[100%] Built target hash
+---------------------------------------------------
+Hybrid Insert Avg,StdDev (us): 801741,3277
+Hybrid Find Avg,StdDev (us): 564377,4245
+---------------------------------------------------
+CPU Insert Avg,StdDev (us): 713086,4771
+CPU Find Avg,StdDev (us): 640879,1623
+Batch size=16384 Key size=495 Word size=16 Hash Entries=2097152 Test Entries=1048576 MULTI-THREADED=0 Num Threads=10 Num test runs=100
