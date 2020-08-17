@@ -379,7 +379,7 @@ class HybridHashTableTest : public HashTableTestBase {
         TODO: cleanup the data_copy thing
      */
     void find_all_mt(DataMap& test_data, bool check_data) override {
-        static_assert(NUM_BATCHES >= NUM_THREADS, "More batches than threads means indexing logic won't work");
+        static_assert(!USE_MULTITHREADED || NUM_BATCHES >= NUM_THREADS, "More threads than batches means indexing logic won't work");
         std::vector<std::thread> threads;
         for (uint i = 0; i < NUM_THREADS; i++) {
             threads.emplace_back([&, index = i]() {
@@ -489,9 +489,18 @@ int main(void) {
         hybrid_tester.clear();
         cpu_tester.clear();
     }
+    //hybrid_tester.print_averages();
     hybrid_tester.print_stats();
-    //cpu_tester.print_stats();
-    std::cout << "Batch size: " << BATCH_SIZE << std::endl;
+    cpu_tester.print_stats();
+    std::cout << "Batch size=" << BATCH_SIZE;
+    std::cout << " Key size=" << KEY_SIZE;
+    std::cout << " Word size=" << WORD_SIZE;
+    std::cout << " Hash Entries=" << NUM_ELEMENTS;
+    std::cout << " Test Entries=" << NUM_TEST_ENTRIES;
+    std::cout << " MULTI-THREADED=" << USE_MULTITHREADED;
+    std::cout << " Num Threads=" << NUM_THREADS;
+    std::cout << " Num test runs=" << NUM_TEST_TIMES;
+    std::cout << std::endl;
 
     return 0;
 }

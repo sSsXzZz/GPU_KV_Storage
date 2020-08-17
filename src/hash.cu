@@ -170,6 +170,7 @@ HybridHashTable::HybridHashTable() : stream_count{0} {
         cudaMalloc(&input_find_bufs[i], sizeof(HybridFindBatchInput));
         cudaMalloc(&output_find_bufs[i], sizeof(HybridFindBatchOutput));
     }
+    cudaCheckErrors();
 }
 
 uint32_t HybridHashTable::find_location(char key[KEY_SIZE]) {

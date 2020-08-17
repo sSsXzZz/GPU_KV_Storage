@@ -22,7 +22,10 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 
 // Constants for hash table
 static constexpr uint64_t NUM_ELEMENTS = 1 << 21;  // ~2M elements
-static constexpr uint KEY_SIZE = 15;
+// static constexpr uint KEY_SIZE = 15;
+#ifndef KEY_SIZE
+#define KEY_SIZE 495 // = 32 - 1 - 16
+#endif
 static constexpr uint WORD_SIZE = 16;
 #ifndef BATCH_SIZE
 #define BATCH_SIZE (1 << 14)
@@ -132,9 +135,9 @@ class GpuHashTable : public CudaMemory {
 
 struct HybridInsertBatch {
     HybridInsertBatch() {
-        memset(&keys, 0, BATCH_SIZE * KEY_SIZE);
-        memset(&locations, 0, BATCH_SIZE);
-        memset(&words, 0, BATCH_SIZE * WORD_SIZE);
+        memset(&keys, 0, (size_t) BATCH_SIZE * KEY_SIZE);
+        memset(&locations, 0, (size_t) BATCH_SIZE);
+        memset(&words, 0, (size_t) BATCH_SIZE * WORD_SIZE);
     }
 
     char keys[BATCH_SIZE][KEY_SIZE];
@@ -144,7 +147,7 @@ struct HybridInsertBatch {
 
 struct HybridFindBatchInput {
     HybridFindBatchInput() {
-        memset(&keys, 0, BATCH_SIZE * KEY_SIZE);
+        memset(&keys, 0, (size_t) BATCH_SIZE * KEY_SIZE);
     }
 
     char keys[BATCH_SIZE][KEY_SIZE];
