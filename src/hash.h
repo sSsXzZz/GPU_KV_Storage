@@ -24,9 +24,13 @@ int cudaConfigureCall(dim3 grid_size, dim3 block_size, unsigned shared_size = 0,
 static constexpr uint64_t NUM_ELEMENTS = 1 << 21;  // ~2M elements
 // static constexpr uint KEY_SIZE = 15;
 #ifndef KEY_SIZE
-#define KEY_SIZE 495 // = 32 - 1 - 16
+#define KEY_SIZE 15
 #endif
-static constexpr uint WORD_SIZE = 16;
+
+#ifndef WORD_SIZE
+#define WORD_SIZE 16
+#endif
+
 #ifndef BATCH_SIZE
 #define BATCH_SIZE (1 << 14)
 #endif
