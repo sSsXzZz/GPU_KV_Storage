@@ -186,7 +186,67 @@ def plot_word():
 
     plt.show()
 
+def plot_thread():
+    thread_data = np.genfromtxt('./csv_files/thread.csv', delimiter=',', names=True, skip_header=1)
+    n_thread_data = len(thread_data['Threads'])
+
+    # FIND - Average data
+    # --------------------------
+    fig_avg_find, ax_avg_find = plt.subplots()
+
+    ax_avg_find.plot(thread_data['Threads'], thread_data['HybridFindAvg'], '-o', label='Hybrid Find')
+    ax_avg_find.plot(thread_data['Threads'], thread_data['CPUFindAvg'], '--s', label='CPU Find')
+    ax_avg_find.legend()
+    ax_avg_find.set(title='Find Average Times', xlabel='Threads', ylabel='Time (us)')
+    ax_avg_find.set_xscale('log', base=2)
+    ax_avg_find.set_yscale('log', base=10)
+    ax_avg_find.grid()
+
+    fig_avg_find.savefig("graphs/thread_avg_find.png")
+
+    # Insert - Average data
+    # --------------------------
+    fig_avg_insert, ax_avg_insert = plt.subplots()
+
+    ax_avg_insert.plot(thread_data['Threads'], thread_data['HybridInsertAvg'], '-o', label='Hybrid Insert')
+    ax_avg_insert.plot(thread_data['Threads'], thread_data['CPUInsertAvg'], '--s', label='CPU Insert')
+    ax_avg_insert.legend()
+    ax_avg_insert.set(title='Insert Average Times', xlabel='Threads', ylabel='Time (us)')
+    ax_avg_insert.set_xscale('log', base=2)
+    #ax_avg_insert.set_yscale('log', base=10)
+    ax_avg_insert.grid()
+
+    fig_avg_insert.savefig("graphs/thread_avg_insert.png")
+
+    # FIND - Std Dev Data
+    # ---------------------------------
+    fig_dev_find, ax_dev_find = plt.subplots()
+
+    ax_dev_find.plot(thread_data['Threads'], thread_data['HybridFindStdDev'], '-o', label='Hybrid Find')
+    ax_dev_find.plot(thread_data['Threads'], thread_data['CPUFindStdDev'], '--s', label='CPU Find')
+    ax_dev_find.legend()
+    ax_dev_find.set(title='Find Standard Deviations', xlabel='Threads', ylabel='Time (us)')
+    ax_dev_find.set_xscale('log', base=2)
+    #ax_dev_find.set_yscale('log', base=10)
+    ax_dev_find.grid()
+
+    # Insert - Std Dev Data
+    # ---------------------------------
+    fig_dev_insert, ax_dev_insert = plt.subplots()
+
+    ax_dev_insert.plot(thread_data['Threads'], thread_data['HybridInsertStdDev'], '-o', label='Hybrid Insert')
+    ax_dev_insert.plot(thread_data['Threads'], thread_data['CPUInsertStdDev'], '--s', label='CPU Insert')
+    ax_dev_insert.legend()
+    ax_dev_insert.set(title='Insert Standard Deviations', xlabel='Threads', ylabel='Time (us)')
+    ax_dev_insert.set_xscale('log', base=2)
+    #ax_dev_insert.set_yscale('log', base=10)
+    ax_dev_insert.grid()
+
+    fig_dev_insert.savefig("graphs/thread_dev_insert.png")
+
+    plt.show()
 
 # plot_variable_batch()
 # plot_key()
-plot_word()
+# plot_word()
+plot_thread()
