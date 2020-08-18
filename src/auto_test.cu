@@ -29,6 +29,10 @@ static constexpr uint NUM_THREADS = 10;
 static constexpr bool USE_MULTITHREADED = false;
 static constexpr bool CHECK_DATA = false;
 
+#ifndef NUM_THREADS
+#define NUM_THREADS 10
+#endif
+
 struct KVPair {
     std::string key;
     std::string word;
@@ -92,12 +96,12 @@ class HashTableTestBase {
         time_t insert_variance = 0;
         time_t find_variance = 0;
 
-        for (time_t &insert_time : insert_all_times) {
+        for (time_t& insert_time : insert_all_times) {
             insert_variance += std::pow(insert_time - insert_all_avg, 2);
         }
         insert_variance /= (insert_all_times.size() - 1);
 
-        for (time_t &find_time : find_all_times) {
+        for (time_t& find_time : find_all_times) {
             find_variance += std::pow(find_time - find_all_avg, 2);
         }
         find_variance /= (find_all_times.size() - 1);
@@ -108,7 +112,6 @@ class HashTableTestBase {
         std::cout << "---------------------------------------------------\n";
         std::cout << name_ << " Insert Avg,StdDev (us): " << insert_all_avg << "," << insert_std_dev << std::endl;
         std::cout << name_ << " Find Avg,StdDev (us): " << find_all_avg << "," << find_std_dev << std::endl;
-
     }
 
   protected:
@@ -379,7 +382,8 @@ class HybridHashTableTest : public HashTableTestBase {
         TODO: cleanup the data_copy thing
      */
     void find_all_mt(DataMap& test_data, bool check_data) override {
-        static_assert(!USE_MULTITHREADED || NUM_BATCHES >= NUM_THREADS, "More threads than batches means indexing logic won't work");
+        static_assert(!USE_MULTITHREADED || NUM_BATCHES >= NUM_THREADS,
+                      "More threads than batches means indexing logic won't work");
         std::vector<std::thread> threads;
         for (uint i = 0; i < NUM_THREADS; i++) {
             threads.emplace_back([&, index = i]() {
