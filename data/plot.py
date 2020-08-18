@@ -10,8 +10,8 @@ def plot_variable_batch():
     CPU_MT_FIND_AVG = 13105
     CPU_MT_FIND_STDDEV = 179
 
-    batch_data = np.genfromtxt('./batch.csv', delimiter=',', names=True, skip_header=1)
-    batch_data_mt = np.genfromtxt('./batch_mt.csv', delimiter=',', names=True, skip_header=1)
+    batch_data = np.genfromtxt('./csv_files/batch.csv', delimiter=',', names=True, skip_header=1)
+    batch_data_mt = np.genfromtxt('./csv_files/batch_mt.csv', delimiter=',', names=True, skip_header=1)
     n_batch_data = len(batch_data['BatchSize'])
 
     # Average data
