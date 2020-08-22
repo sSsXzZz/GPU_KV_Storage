@@ -32,7 +32,7 @@ def plot_variable_batch():
     ax_avg_find.set_yscale('log', base=10)
     ax_avg_find.grid()
 
-    fig_avg_find.savefig("graphs/batch_avg_find.png")
+    fig_avg_find.savefig("graphs/batch_avg_find.png", bbox_inches="tight")
 
     # Insert - Average data
     # --------------------------
@@ -48,7 +48,7 @@ def plot_variable_batch():
     #ax_avg_insert.set_yscale('log', base=10)
     ax_avg_insert.grid()
 
-    fig_avg_insert.savefig("graphs/batch_avg_insert.png")
+    fig_avg_insert.savefig("graphs/batch_avg_insert.png", bbox_inches="tight")
 
     # FIND - Std Dev Data
     # ---------------------------------
@@ -64,7 +64,7 @@ def plot_variable_batch():
     #ax_dev_find.set_yscale('log', base=10)
     ax_dev_find.grid()
 
-    fig_dev_find.savefig("graphs/batch_dev_find.png")
+    fig_dev_find.savefig("graphs/batch_dev_find.png", bbox_inches="tight")
 
     # Insert - Std Dev Data
     # ---------------------------------
@@ -80,7 +80,7 @@ def plot_variable_batch():
     #ax_dev_insert.set_yscale('log', base=10)
     ax_dev_insert.grid()
 
-    fig_dev_insert.savefig("graphs/batch_dev_insert.png")
+    fig_dev_insert.savefig("graphs/batch_dev_insert.png", bbox_inches="tight")
 
     plt.show()
     
@@ -103,7 +103,7 @@ def plot_key():
     ax_avg_find.set_yscale('log', base=10)
     ax_avg_find.grid()
 
-    fig_avg_find.savefig("graphs/key_avg_find.png")
+    fig_avg_find.savefig("graphs/key_avg_find.png", bbox_inches="tight")
 
     # Insert - Average data
     # --------------------------
@@ -119,7 +119,7 @@ def plot_key():
     ax_avg_insert.set_yscale('log', base=10)
     ax_avg_insert.grid()
 
-    fig_avg_insert.savefig("graphs/key_avg_insert.png")
+    fig_avg_insert.savefig("graphs/key_avg_insert.png", bbox_inches="tight")
 
     # FIND - Std Dev Data
     # ---------------------------------
@@ -135,6 +135,8 @@ def plot_key():
     #ax_dev_find.set_yscale('log', base=10)
     ax_dev_find.grid()
 
+    fig_dev_find.savefig("graphs/key_dev_find.png", bbox_inches="tight")
+
     # Insert - Std Dev Data
     # ---------------------------------
     fig_dev_insert, ax_dev_insert = plt.subplots()
@@ -149,7 +151,7 @@ def plot_key():
     #ax_dev_insert.set_yscale('log', base=10)
     ax_dev_insert.grid()
 
-    fig_dev_insert.savefig("graphs/key_dev_insert.png")
+    fig_dev_insert.savefig("graphs/key_dev_insert.png", bbox_inches="tight")
 
     plt.show()
     
@@ -172,7 +174,7 @@ def plot_word():
     ax_avg_find.set_yscale('log', base=10)
     ax_avg_find.grid()
 
-    fig_avg_find.savefig("graphs/word_avg_find.png")
+    fig_avg_find.savefig("graphs/word_avg_find.png", bbox_inches="tight")
 
     # Insert - Average data
     # --------------------------
@@ -188,7 +190,7 @@ def plot_word():
     #ax_avg_insert.set_yscale('log', base=10)
     ax_avg_insert.grid()
 
-    fig_avg_insert.savefig("graphs/word_avg_insert.png")
+    fig_avg_insert.savefig("graphs/word_avg_insert.png", bbox_inches="tight")
 
     # FIND - Std Dev Data
     # ---------------------------------
@@ -204,6 +206,8 @@ def plot_word():
     #ax_dev_find.set_yscale('log', base=10)
     ax_dev_find.grid()
 
+    fig_dev_find.savefig("graphs/word_dev_find.png", bbox_inches="tight")
+
     # Insert - Std Dev Data
     # ---------------------------------
     fig_dev_insert, ax_dev_insert = plt.subplots()
@@ -218,7 +222,7 @@ def plot_word():
     #ax_dev_insert.set_yscale('log', base=10)
     ax_dev_insert.grid()
 
-    fig_dev_insert.savefig("graphs/word_dev_insert.png")
+    fig_dev_insert.savefig("graphs/word_dev_insert.png", bbox_inches="tight")
 
     plt.show()
 
@@ -238,7 +242,7 @@ def plot_thread():
     ax_avg_find.set_yscale('log', base=10)
     ax_avg_find.grid()
 
-    fig_avg_find.savefig("graphs/thread_avg_find.png")
+    fig_avg_find.savefig("graphs/thread_avg_find.png", bbox_inches="tight")
 
     # Insert - Average data
     # --------------------------
@@ -252,7 +256,7 @@ def plot_thread():
     #ax_avg_insert.set_yscale('log', base=10)
     ax_avg_insert.grid()
 
-    fig_avg_insert.savefig("graphs/thread_avg_insert.png")
+    fig_avg_insert.savefig("graphs/thread_avg_insert.png", bbox_inches="tight")
 
     # FIND - Std Dev Data
     # ---------------------------------
@@ -266,6 +270,8 @@ def plot_thread():
     #ax_dev_find.set_yscale('log', base=10)
     ax_dev_find.grid()
 
+    fig_dev_find.savefig("graphs/thread_dev_find.png", bbox_inches="tight")
+
     # Insert - Std Dev Data
     # ---------------------------------
     fig_dev_insert, ax_dev_insert = plt.subplots()
@@ -278,7 +284,7 @@ def plot_thread():
     #ax_dev_insert.set_yscale('log', base=10)
     ax_dev_insert.grid()
 
-    fig_dev_insert.savefig("graphs/thread_dev_insert.png")
+    fig_dev_insert.savefig("graphs/thread_dev_insert.png", bbox_inches="tight")
 
     plt.show()
 
