@@ -132,7 +132,7 @@ def plot_key():
     ax_dev_find.legend()
     ax_dev_find.set(title='Find - Standard Deviation', xlabel='Key Size', ylabel='Time (us)')
     ax_dev_find.set_xscale('log', base=2)
-    #ax_dev_find.set_yscale('log', base=10)
+    ax_dev_find.set_yscale('log', base=2)
     ax_dev_find.grid()
 
     fig_dev_find.savefig("graphs/key_dev_find.png", bbox_inches="tight")
