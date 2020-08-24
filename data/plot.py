@@ -287,8 +287,90 @@ def plot_thread():
     fig_dev_insert.savefig("graphs/thread_dev_insert.png", bbox_inches="tight")
 
     plt.show()
+    
+def plot_load():
+    load_data = np.genfromtxt('./csv_files/load.csv', delimiter=',', names=True, skip_header=1)
+    load_data_mt = np.genfromtxt('./csv_files/load_mt.csv', delimiter=',', names=True, skip_header=1)
+
+    HASH_ENTRIES = 2097152
+
+    load_factors = []
+    load_factors_mt = []
+
+    for test_entries in load_data['TestEntries']:
+        load_factors.append(test_entries / HASH_ENTRIES)
+
+    for test_entries in load_data_mt['TestEntries']:
+        load_factors_mt.append(test_entries / HASH_ENTRIES)
+
+    # FIND - Average data
+    # --------------------------
+    fig_avg_find, ax_avg_find = plt.subplots()
+
+    ax_avg_find.plot(load_factors, load_data['HybridFindAvg'], '-o', label='Hybrid Single-Threaded')
+    ax_avg_find.plot(load_factors_mt, load_data_mt['HybridFindAvg'], '-v', label='Hybrid Multi-Threaded')
+    ax_avg_find.plot(load_factors, load_data['CPUFindAvg'], '--s', label='CPU Single-Threaded')
+    ax_avg_find.plot(load_factors_mt, load_data_mt['CPUFindAvg'], '--*', label='CPU Multi-Threaded')
+    ax_avg_find.legend()
+    ax_avg_find.set(title='Find - Average Latency', xlabel='Load Factor', ylabel='Time (us)')
+    #ax_avg_find.set_xscale('log', base=2)
+    ax_avg_find.set_yscale('log', base=10)
+    ax_avg_find.grid()
+
+    fig_avg_find.savefig("graphs/load_avg_find.png", bbox_inches="tight")
+
+    # Insert - Average data
+    # --------------------------
+    fig_avg_insert, ax_avg_insert = plt.subplots()
+
+    ax_avg_insert.plot(load_factors, load_data['HybridInsertAvg'], '-o', label='Hybrid Single-Threaded')
+    ax_avg_insert.plot(load_factors_mt, load_data_mt['HybridInsertAvg'], '-v', label='Hybrid Multi-Threaded')
+    ax_avg_insert.plot(load_factors, load_data['CPUInsertAvg'], '--s', label='CPU Single-Threaded')
+    ax_avg_insert.plot(load_factors_mt, load_data_mt['CPUInsertAvg'], '--*', label='CPU Multi-Threaded')
+    ax_avg_insert.legend()
+    ax_avg_insert.set(title='Insert - Average Latency', xlabel='Load Factor', ylabel='Time (us)')
+    #ax_avg_insert.set_xscale('log', base=2)
+    ax_avg_insert.set_yscale('log', base=10)
+    ax_avg_insert.grid()
+
+    fig_avg_insert.savefig("graphs/load_avg_insert.png", bbox_inches="tight")
+
+    # FIND - Std Dev Data
+    # ---------------------------------
+    fig_dev_find, ax_dev_find = plt.subplots()
+
+    ax_dev_find.plot(load_factors, load_data['HybridFindStdDev'], '-o', label='Hybrid Single-Threaded')
+    ax_dev_find.plot(load_factors_mt, load_data_mt['HybridFindStdDev'], '-v', label='Hybrid Multi-Threaded')
+    ax_dev_find.plot(load_factors, load_data['CPUFindStdDev'], '--s', label='CPU Single-Threaded')
+    ax_dev_find.plot(load_factors_mt, load_data_mt['CPUFindStdDev'], '--*', label='CPU Multi-Threaded')
+    ax_dev_find.legend()
+    ax_dev_find.set(title='Find - Standard Deviation', xlabel='Load Factor', ylabel='Time (us)')
+    #ax_dev_find.set_xscale('log', base=2)
+    ax_dev_find.set_yscale('log', base=10)
+    ax_dev_find.grid()
+
+    fig_dev_find.savefig("graphs/load_dev_find.png", bbox_inches="tight")
+
+    # Insert - Std Dev Data
+    # ---------------------------------
+    fig_dev_insert, ax_dev_insert = plt.subplots()
+
+    ax_dev_insert.plot(load_factors, load_data['HybridInsertStdDev'], '-o', label='Hybrid Single-Threaded')
+    ax_dev_insert.plot(load_factors_mt, load_data_mt['HybridInsertStdDev'], '-v', label='Hybrid Multi-Threaded')
+    ax_dev_insert.plot(load_factors, load_data['CPUInsertStdDev'], '--s', label='CPU Single-Threaded')
+    ax_dev_insert.plot(load_factors_mt, load_data_mt['CPUInsertStdDev'], '--*', label='CPU Multi-Threaded')
+    ax_dev_insert.legend()
+    ax_dev_insert.set(title='Insert - Standard Deviation', xlabel='Load Factor', ylabel='Time (us)')
+    #ax_dev_insert.set_xscale('log', base=2)
+    ax_dev_insert.set_yscale('log', base=10)
+    ax_dev_insert.grid()
+
+    fig_dev_insert.savefig("graphs/load_dev_insert.png", bbox_inches="tight")
+
+    plt.show()
 
 # plot_variable_batch()
-plot_key()
+# plot_key()
 # plot_word()
 # plot_thread()
+plot_load()
