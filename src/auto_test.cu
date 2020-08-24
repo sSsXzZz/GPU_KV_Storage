@@ -65,7 +65,7 @@ class HashTableTestBase {
         insert_all(test_data);
         time_t t1_insert = get_time_us();
         insert_all_times.emplace_back(t1_insert - t0_insert);
-        std::cout << name_ << " Insert time: " << t1_insert - t0_insert << " us" << std::endl;
+        // std::cout << name_ << " Insert time: " << t1_insert - t0_insert << " us" << std::endl;
 
         time_t t0_find = get_time_us();
         if (USE_MULTITHREADED) {
@@ -75,7 +75,7 @@ class HashTableTestBase {
         }
         time_t t1_find = get_time_us();
         find_all_times.emplace_back(t1_find - t0_find);
-        std::cout << name_ << " Find time: " << t1_find - t0_find << " us" << std::endl;
+        // std::cout << name_ << " Find time: " << t1_find - t0_find << " us" << std::endl;
     }
 
     void print_averages() {
@@ -97,19 +97,23 @@ class HashTableTestBase {
 
         time_t insert_variance = 0;
         time_t find_variance = 0;
+        time_t insert_std_dev = 0;
+        time_t find_std_dev = 0;
 
-        for (time_t& insert_time : insert_all_times) {
-            insert_variance += std::pow(insert_time - insert_all_avg, 2);
+        if (insert_all_times.size() > 1) {
+            for (time_t& insert_time : insert_all_times) {
+                insert_variance += std::pow(insert_time - insert_all_avg, 2);
+            }
+            insert_variance /= (insert_all_times.size() - 1);
+
+            for (time_t& find_time : find_all_times) {
+                find_variance += std::pow(find_time - find_all_avg, 2);
+            }
+            find_variance /= (find_all_times.size() - 1);
+
+            insert_std_dev = std::sqrt(insert_variance);
+            find_std_dev = std::sqrt(find_variance);
         }
-        insert_variance /= (insert_all_times.size() - 1);
-
-        for (time_t& find_time : find_all_times) {
-            find_variance += std::pow(find_time - find_all_avg, 2);
-        }
-        find_variance /= (find_all_times.size() - 1);
-
-        time_t insert_std_dev = std::sqrt(insert_variance);
-        time_t find_std_dev = std::sqrt(find_variance);
 
         std::cout << "---------------------------------------------------\n";
         std::cout << name_ << " Insert Avg,StdDev (us): " << insert_all_avg << "," << insert_std_dev << std::endl;
@@ -485,7 +489,7 @@ int main(void) {
             data_copy.emplace_back(std::move(kv_pair));
         }
 
-        std::cout << "Running test " << n_test << "/" << NUM_TEST_TIMES << std::endl;
+        // std::cout << "Running test " << n_test << "/" << NUM_TEST_TIMES << std::endl;
         cudaProfilerStart();
         hybrid_tester.test_all(test_data, CHECK_DATA);
         cudaProfilerStop();
@@ -495,7 +499,7 @@ int main(void) {
         hybrid_tester.clear();
         cpu_tester.clear();
     }
-    //hybrid_tester.print_averages();
+    // hybrid_tester.print_averages();
     hybrid_tester.print_stats();
     cpu_tester.print_stats();
     std::cout << "Batch size=" << BATCH_SIZE;
