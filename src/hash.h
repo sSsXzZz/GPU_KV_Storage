@@ -36,7 +36,9 @@ static constexpr uint64_t NUM_ELEMENTS = 1 << 21;  // ~2M elements
 #endif
 static constexpr uint CPU_BATCH_SIZE = 10;
 
-static constexpr uint BLOCK_SIZE = 256;
+#ifndef BLOCK_SIZE
+#define BLOCK_SIZE 256
+#endif
 
 // Used for kernel calls that touch ALL elements of the hash table
 static constexpr uint NUM_BLOCKS_ALL = (NUM_ELEMENTS + BLOCK_SIZE - 1) / BLOCK_SIZE;

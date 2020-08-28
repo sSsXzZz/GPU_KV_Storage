@@ -24,8 +24,11 @@ using DataMap = std::unordered_map<std::string, std::string>;
 
 static constexpr char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 static constexpr uint NUM_TEST_TIMES = 100;
-static constexpr bool USE_MULTITHREADED = false;
 static constexpr bool CHECK_DATA = false;
+
+#ifndef USE_MULTITHREADED
+#define USE_MULTITHREADED false
+#endif
 
 #ifndef NUM_TEST_ENTRIES
 #define NUM_TEST_ENTRIES (1 << 20)
@@ -510,6 +513,7 @@ int main(void) {
     std::cout << " MULTI-THREADED=" << USE_MULTITHREADED;
     std::cout << " Num Threads=" << NUM_THREADS;
     std::cout << " Num test runs=" << NUM_TEST_TIMES;
+    std::cout << " Block Size=" << BLOCK_SIZE;
     std::cout << std::endl;
 
     return 0;
