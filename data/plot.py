@@ -389,16 +389,30 @@ def plot_block_size():
     fig_avg_find, ax_avg_find = plt.subplots()
 
     ax_avg_find.plot(block_data['BlockSize'], block_data['HybridFindAvg'], '-o', label='Hybrid Single-Threaded')
-    ax_avg_find.plot(block_data_mt['BlockSize'], block_data_mt['HybridFindAvg'], '-v', label='Hybrid Multi-Threaded')
+    #ax_avg_find.plot(block_data_mt['BlockSize'], block_data_mt['HybridFindAvg'], '-v', label='Hybrid Multi-Threaded')
     ax_avg_find.plot(block_data['BlockSize'], np.repeat(CPU_FIND_AVG, n_block_data), '--s', label='CPU Single-Threaded')
-    ax_avg_find.plot(block_data['BlockSize'], np.repeat(CPU_MT_FIND_AVG, n_block_data), '--*', label='CPU Multi-Threaded')
-    ax_avg_find.legend()
+    #ax_avg_find.plot(block_data['BlockSize'], np.repeat(CPU_MT_FIND_AVG, n_block_data), '--*', label='CPU Multi-Threaded')
+    ax_avg_find.legend()#bbox_to_anchor=(1.0,0.7), loc="right")
     ax_avg_find.set(title='Find - Average Latency', xlabel='Block Size', ylabel='Time (us)')
     ax_avg_find.set_xscale('log', base=2)
-    ax_avg_find.set_yscale('log', base=10)
+    #ax_avg_find.set_yscale('log', base=10)
     ax_avg_find.grid()
 
     fig_avg_find.savefig("graphs/block_avg_find.png", bbox_inches="tight")
+
+    # FIND MT - Average data
+    # --------------------------
+    fig_avg_find_mt, ax_avg_find_mt = plt.subplots()
+
+    ax_avg_find_mt.plot(block_data_mt['BlockSize'], block_data_mt['HybridFindAvg'], '-v', label='Hybrid Multi-Threaded')
+    ax_avg_find_mt.plot(block_data['BlockSize'], np.repeat(CPU_MT_FIND_AVG, n_block_data), '--*', label='CPU Multi-Threaded')
+    ax_avg_find_mt.legend()#bbox_to_anchor=(1.0,0.7), loc="right")
+    ax_avg_find_mt.set(title='Find - Average Latency', xlabel='Block Size', ylabel='Time (us)')
+    ax_avg_find_mt.set_xscale('log', base=2)
+    #ax_avg_find_mt.set_yscale('log', base=10)
+    ax_avg_find_mt.grid()
+
+    fig_avg_find_mt.savefig("graphs/block_avg_find_mt.png", bbox_inches="tight")
 
     # Insert - Average data
     # --------------------------
