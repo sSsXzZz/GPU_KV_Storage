@@ -244,6 +244,8 @@ class HybridHashTableTest : public HashTableTestBase {
 
         for (uint i = 0; i < NUM_BATCHES; i++) {
             cudaMallocHost(&insert_batches[i], sizeof(HybridInsertBatch));
+        }
+        for (uint i = 0; i < NUM_THREADS; i++) {
             cudaMallocHost(&find_input_batches[i], sizeof(HybridFindBatchInput));
             cudaMallocHost(&find_output_batches[i], sizeof(HybridFindBatchOutput));
         }
@@ -255,6 +257,8 @@ class HybridHashTableTest : public HashTableTestBase {
         delete h;
         for (uint i = 0; i < NUM_BATCHES; i++) {
             cudaFreeHost(&insert_batches[i]);
+        }
+        for (uint i = 0; i < NUM_THREADS; i++) {
             cudaFreeHost(&find_input_batches[i]);
             cudaFreeHost(&find_output_batches[i]);
         }
@@ -370,10 +374,6 @@ class HybridHashTableTest : public HashTableTestBase {
                     compare_data(test_data, find_batch_input, find_batch_output, BATCH_SIZE);
                 }
                 batch_index = 0;
-
-                find_batch_index++;
-                find_batch_input = find_input_batches[find_batch_index];
-                find_batch_output = find_output_batches[find_batch_index];
             }
         }
         // Check remaining entries
@@ -400,11 +400,9 @@ class HybridHashTableTest : public HashTableTestBase {
                 uint start_index = (NUM_TEST_ENTRIES / NUM_THREADS) * index;
                 uint end_index = (NUM_TEST_ENTRIES / NUM_THREADS) * (index + 1);
 
-                // There should be 1 out_batch per request that will be made
-                // Figure out which batches this thread is using
-                uint find_batch_index = (NUM_BATCHES / NUM_THREADS) * index;
-                HybridFindBatchInput* find_batch_input = find_input_batches[find_batch_index];
-                HybridFindBatchOutput* find_batch_output = find_output_batches[find_batch_index];
+                // There is one in_batch/out_batch per thread that will be made
+                HybridFindBatchInput* find_batch_input = find_input_batches[index];
+                HybridFindBatchOutput* find_batch_output = find_output_batches[index];
 
                 uint batch_index = 0;
                 for (uint i = start_index; i < end_index; i++) {
@@ -421,10 +419,6 @@ class HybridHashTableTest : public HashTableTestBase {
                             compare_data(test_data, find_batch_input, find_batch_output, BATCH_SIZE);
                         }
                         batch_index = 0;
-
-                        find_batch_index++;
-                        find_batch_input = find_input_batches[find_batch_index];
-                        find_batch_output = find_output_batches[find_batch_index];
                     }
                 }
                 // Insert remaining entries
@@ -449,8 +443,8 @@ class HybridHashTableTest : public HashTableTestBase {
 
     HybridHashTable* h;
     HybridInsertBatch* insert_batches[NUM_BATCHES];
-    HybridFindBatchInput* find_input_batches[NUM_BATCHES];
-    HybridFindBatchOutput* find_output_batches[NUM_BATCHES];
+    HybridFindBatchInput* find_input_batches[NUM_THREADS];
+    HybridFindBatchOutput* find_output_batches[NUM_THREADS];
 };
 
 std::string get_random_string(UniformDistribution& char_picker, Generator& generator, uint used_space, uint length) {
