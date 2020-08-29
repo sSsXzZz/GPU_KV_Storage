@@ -5,7 +5,7 @@ for MULTI_THREADED in `seq 0 1`; do
         USE_MULTITHREADED="true"
     fi
 
-    for POWER in `seq 4 12`; do
+    for POWER in `seq 0 12`; do
         BLOCK_SIZE=$(echo "2^${POWER}" | bc)
         rm -rf CMakeFiles/ compile_commands.json CMakeCache.txt cmake_install.cmake
         echo "--------------------------------------------"
@@ -16,4 +16,4 @@ for MULTI_THREADED in `seq 0 1`; do
     done
 done
 
-# Powers from 16 (2^4) -> 4096 (2^12)
+# Powers from 1 (2^0) -> 4096 (2^12)

@@ -369,8 +369,91 @@ def plot_load():
 
     plt.show()
 
+def plot_block_size():
+    # CPU does not use block size parameter, so using constants
+    CPU_FIND_AVG = 71997
+    CPU_FIND_STDDEV = 628
+    CPU_MT_FIND_AVG = 13105
+    CPU_MT_FIND_STDDEV = 179
+    CPU_INSERT_AVG = 119134
+    CPU_INSERT_STDDEV = 619
+    CPU_MT_INSERT_AVG = 120137
+    CPU_MT_INSERT_STDDEV = 941
+
+    block_data = np.genfromtxt('./csv_files/block_size.csv', delimiter=',', names=True, skip_header=1)
+    block_data_mt = np.genfromtxt('./csv_files/block_size_mt.csv', delimiter=',', names=True, skip_header=1)
+    n_block_data = len(block_data['BlockSize'])
+
+    # FIND - Average data
+    # --------------------------
+    fig_avg_find, ax_avg_find = plt.subplots()
+
+    ax_avg_find.plot(block_data['BlockSize'], block_data['HybridFindAvg'], '-o', label='Hybrid Single-Threaded')
+    ax_avg_find.plot(block_data_mt['BlockSize'], block_data_mt['HybridFindAvg'], '-v', label='Hybrid Multi-Threaded')
+    ax_avg_find.plot(block_data['BlockSize'], np.repeat(CPU_FIND_AVG, n_block_data), '--s', label='CPU Single-Threaded')
+    ax_avg_find.plot(block_data['BlockSize'], np.repeat(CPU_MT_FIND_AVG, n_block_data), '--*', label='CPU Multi-Threaded')
+    ax_avg_find.legend()
+    ax_avg_find.set(title='Find - Average Latency', xlabel='Block Size', ylabel='Time (us)')
+    ax_avg_find.set_xscale('log', base=2)
+    ax_avg_find.set_yscale('log', base=10)
+    ax_avg_find.grid()
+
+    fig_avg_find.savefig("graphs/block_avg_find.png", bbox_inches="tight")
+
+    # Insert - Average data
+    # --------------------------
+    fig_avg_insert, ax_avg_insert = plt.subplots()
+
+    ax_avg_insert.plot(block_data['BlockSize'], block_data['HybridInsertAvg'], '-o', label='Hybrid Single-Threaded')
+    ax_avg_insert.plot(block_data_mt['BlockSize'], block_data_mt['HybridInsertAvg'], '-v', label='Hybrid Multi-Threaded')
+    ax_avg_insert.plot(block_data['BlockSize'], np.repeat(CPU_INSERT_AVG, n_block_data), '--s', label='CPU Single-Threaded')
+    ax_avg_insert.plot(block_data['BlockSize'], np.repeat(CPU_MT_INSERT_AVG, n_block_data), '--*', label='CPU Multi-Threaded')
+    ax_avg_insert.legend()
+    ax_avg_insert.set(title='Insert - Average Latency', xlabel='Block Size', ylabel='Time (us)')
+    ax_avg_insert.set_xscale('log', base=2)
+    #ax_avg_insert.set_yscale('log', base=10)
+    ax_avg_insert.grid()
+
+    fig_avg_insert.savefig("graphs/block_avg_insert.png", bbox_inches="tight")
+
+    # FIND - Std Dev Data
+    # ---------------------------------
+    fig_dev_find, ax_dev_find = plt.subplots()
+
+    ax_dev_find.plot(block_data['BlockSize'], block_data['HybridFindStdDev'], '-o', label='Hybrid Single-Threaded')
+    ax_dev_find.plot(block_data_mt['BlockSize'], block_data_mt['HybridFindStdDev'], '-v', label='Hybrid Multi-Threaded')
+    ax_dev_find.plot(block_data['BlockSize'], np.repeat(CPU_FIND_STDDEV, n_block_data), '--s', label='CPU Single-Threaded')
+    ax_dev_find.plot(block_data['BlockSize'], np.repeat(CPU_MT_FIND_STDDEV, n_block_data), '--*', label='CPU Multi-Threaded')
+    ax_dev_find.legend()
+    ax_dev_find.set(title='Find - Standard Deviation', xlabel='Block Size', ylabel='Time (us)')
+    ax_dev_find.set_xscale('log', base=2)
+    #ax_dev_find.set_yscale('log', base=10)
+    ax_dev_find.grid()
+
+    fig_dev_find.savefig("graphs/block_dev_find.png", bbox_inches="tight")
+
+    # Insert - Std Dev Data
+    # ---------------------------------
+    fig_dev_insert, ax_dev_insert = plt.subplots()
+
+    ax_dev_insert.plot(block_data['BlockSize'], block_data['HybridInsertStdDev'], '-o', label='Hybrid Single-Threaded')
+    ax_dev_insert.plot(block_data_mt['BlockSize'], block_data_mt['HybridInsertStdDev'], '-v', label='Hybrid Multi-Threaded')
+    ax_dev_insert.plot(block_data['BlockSize'], np.repeat(CPU_INSERT_STDDEV, n_block_data), '--s', label='CPU Single-Threaded')
+    ax_dev_insert.plot(block_data['BlockSize'], np.repeat(CPU_MT_INSERT_STDDEV, n_block_data), '--*', label='CPU Multi-Threaded')
+    ax_dev_insert.legend()
+    ax_dev_insert.set(title='Insert - Standard Deviation', xlabel='Block Size', ylabel='Time (us)')
+    ax_dev_insert.set_xscale('log', base=2)
+    #ax_dev_insert.set_yscale('log', base=10)
+    ax_dev_insert.grid()
+
+    fig_dev_insert.savefig("graphs/block_dev_insert.png", bbox_inches="tight")
+
+    plt.show()
+    
+
 # plot_variable_batch()
 # plot_key()
 # plot_word()
 # plot_thread()
-plot_load()
+# plot_load()
+plot_block_size()
