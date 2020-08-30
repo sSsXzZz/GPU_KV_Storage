@@ -134,7 +134,7 @@ __global__ void gpu_find_batch(GpuHashTable* hash_table, HybridFindBatchInput* i
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
     for (uint32_t i = index; i < num_entries; i += stride) {
-        // find location (location) that memory is stored
+        // find location that entry is stored
         char* key = input_find_batch->keys[i];
         uint32_t location = hash_function(key);
         HashEntryInternal* entry = &hash_table->entries[location];
@@ -149,7 +149,7 @@ __global__ void gpu_find_batch(GpuHashTable* hash_table, HybridFindBatchInput* i
             entry = &hash_table->entries[location];
         }
 
-        // Do nothing if the entry was not found
+        // Do nothing if the entry was not found, entry_found is already set to false
     }
 }
 
